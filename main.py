@@ -17,7 +17,7 @@ def main():
     clock = pygame.time.Clock()
 
     world = Box2D.b2World(gravity=(0, 0))
-    cell_hexagon = CellHexagon(0, 0, ORGANISM_CELL_RADIUS)
+    cell_hexagon = CellHexagon(0, 0, ORGANISM_CELL_RADIUS, GREEN)
     organism_rendering = OrganismRendering(world, cell_hexagon, screen.center())
 
     running = True
@@ -29,7 +29,7 @@ def main():
         display.fill(BLACK)
         
         for screen_vertices in organism_rendering.screen_vertices():
-            pygame.draw.polygon(display, GREEN, screen_vertices, width=2)
+            pygame.draw.polygon(display, cell_hexagon.color, screen_vertices, width=2)
         
         pygame.display.flip()
         clock.tick(60)
