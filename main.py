@@ -13,7 +13,7 @@ def main():
     pygame.init()
     screen = Screen(800, 600)
     display = pygame.display.set_mode(screen.size())
-    pygame.display.set_caption("Mudskipper - Hexagon")
+    pygame.display.set_caption("Mudskipper")
     clock = pygame.time.Clock()
 
     world = Box2D.b2World(gravity=(0, 0))
