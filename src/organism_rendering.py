@@ -5,15 +5,17 @@ class OrganismRendering:
         self.organism = organism
         self.screen = screen
 
-    def screen_vertices(self):
-        result = []
-        screen_height_pixels = self.screen.height * Screen.PIXELS_PER_METER
-        
+    def screen_vertex_positions(self):
+        positions = []
         for fixture in self.organism.body.fixtures:
             vertices = []
             for vertex in fixture.shape.vertices:
-                x = self.organism.body.position.x * Screen.PIXELS_PER_METER + vertex[0] * Screen.PIXELS_PER_METER
-                y = screen_height_pixels - (self.organism.body.position.y * Screen.PIXELS_PER_METER + vertex[1] * Screen.PIXELS_PER_METER)  # Flip Y axis
-                vertices.append((x, y))
-            result.append(vertices)
-        return result
+                vertices.append((self.vertex_x(vertex), self.vertex_y(vertex)))
+            positions.append(vertices)
+        return positions
+
+    def vertex_x(self, vertex):
+        return Screen.to_pixels(self.organism.body.position.x) + Screen.to_pixels(vertex[0])
+
+    def vertex_y(self, vertex):
+        return self.screen.height_in_pixels() - (Screen.to_pixels(self.organism.body.position.y) + Screen.to_pixels(vertex[1]))

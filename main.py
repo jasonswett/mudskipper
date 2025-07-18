@@ -31,8 +31,8 @@ def main():
         
         display.fill(BLACK)
         
-        for screen_vertices in organism_rendering.screen_vertices():
-            pygame.draw.polygon(display, cell_hexagon.color, screen_vertices, width=2)
+        for position in organism_rendering.screen_vertex_positions():
+            pygame.draw.polygon(display, cell_hexagon.color, position, width=2)
         
         pygame.display.flip()
         clock.tick(60)
