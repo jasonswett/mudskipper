@@ -5,7 +5,8 @@ from cell_hexagon import CellHexagon
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
-PPM = 20.0  # Pixels per meter for Box2D conversion
+ORGANISM_CELL_RADIUS = 3
+PPM = 20.0 # Pixels per meter for Box2D conversion
 
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
@@ -15,19 +16,16 @@ def main():
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Mudskipper - Hexagon")
     clock = pygame.time.Clock()
-    
-    # Create Box2D world
+
     world = Box2D.b2World(gravity=(0, 0))
-    
-    # Create hexagon body
+
     body_def = Box2D.b2BodyDef()
     body_def.type = Box2D.b2_staticBody
     body_def.position = (SCREEN_WIDTH / 2 / PPM, SCREEN_HEIGHT / 2 / PPM)
-    
+
     body = world.CreateBody(body_def)
 
-    # Create hexagon for Box2D (in meters, centered at origin)
-    box2d_hexagon = CellHexagon(0, 0, 3)  # 3 meters radius
+    box2d_hexagon = CellHexagon(0, 0, ORGANISM_CELL_RADIUS)
     
     hexagon_shape = Box2D.b2PolygonShape(vertices=box2d_hexagon.vertices())
     body.CreateFixture(shape=hexagon_shape, density=1.0)
