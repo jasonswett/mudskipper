@@ -3,24 +3,22 @@ import Box2D
 import math
 from src.cell_hexagon import CellHexagon
 from src.organism_rendering import OrganismRendering
+from src.screen import Screen
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
 ORGANISM_CELL_RADIUS = 3
-
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
 
 def main():
     pygame.init()
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    screen = Screen(800, 600)
+    display = pygame.display.set_mode(screen.size())
     pygame.display.set_caption("Mudskipper - Hexagon")
     clock = pygame.time.Clock()
 
     world = Box2D.b2World(gravity=(0, 0))
     cell_hexagon = CellHexagon(0, 0, ORGANISM_CELL_RADIUS)
-    position = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
-    organism_rendering = OrganismRendering(world, cell_hexagon, position)
+    organism_rendering = OrganismRendering(world, cell_hexagon, screen.center())
 
     running = True
     while running:
@@ -28,10 +26,10 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
         
-        screen.fill(BLACK)
+        display.fill(BLACK)
         
         for screen_vertices in organism_rendering.screen_vertices():
-            pygame.draw.polygon(screen, GREEN, screen_vertices, width=2)
+            pygame.draw.polygon(display, GREEN, screen_vertices, width=2)
         
         pygame.display.flip()
         clock.tick(60)
