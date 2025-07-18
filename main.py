@@ -13,8 +13,8 @@ GREEN = (0, 255, 0)
 
 def main():
     pygame.init()
-    screen = Screen(800, 600)
-    display = pygame.display.set_mode(screen.size())
+    screen = Screen(40, 30) # unit: meters
+    display = pygame.display.set_mode(screen.size_in_pixels())
     pygame.display.set_caption("Mudskipper")
     clock = pygame.time.Clock()
 

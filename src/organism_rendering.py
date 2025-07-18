@@ -1,4 +1,4 @@
-PIXELS_PER_METER = 20.0 # Pixels per meter for Box2D conversion
+PIXELS_PER_METER = 20.0
 
 class OrganismRendering:
     def __init__(self, organism):
