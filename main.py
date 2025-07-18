@@ -5,7 +5,7 @@ from src.cell_hexagon import CellHexagon
 from src.organism_rendering import OrganismRendering
 from src.screen import Screen
 
-ORGANISM_CELL_RADIUS = 3
+ORGANISM_CELL_RADIUS = 1
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
 
