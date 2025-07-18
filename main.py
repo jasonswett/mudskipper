@@ -1,7 +1,7 @@
 import pygame
 import Box2D
 import math
-from cell_hexagon import CellHexagon
+from src.cell_hexagon import CellHexagon
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600

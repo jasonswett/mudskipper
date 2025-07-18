@@ -1,3 +1,5 @@
+import math
+
 class CellHexagon:
     def __init__(self, center_x, center_y, radius):
         self.center_x = center_x
@@ -8,8 +10,8 @@ class CellHexagon:
         vertices = []
         for i in range(6):
             angle = (math.pi / 3) * i
-            x = center_x + radius * math.cos(angle)
-            y = center_y + radius * math.sin(angle)
+            x = self.center_x + self.radius * math.cos(angle)
+            y = self.center_y + self.radius * math.sin(angle)
             vertices.append((x, y))
         return vertices
 
