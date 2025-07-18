@@ -24,13 +24,13 @@ def main():
     body_def.type = Box2D.b2_staticBody
     body_def.position = (SCREEN_WIDTH / 2 / PPM, SCREEN_HEIGHT / 2 / PPM)
     
-    hexagon_body = world.CreateBody(body_def)
+    body = world.CreateBody(body_def)
 
     # Create hexagon for Box2D (in meters, centered at origin)
     box2d_hexagon = CellHexagon(0, 0, 3)  # 3 meters radius
     
     hexagon_shape = Box2D.b2PolygonShape(vertices=box2d_hexagon.vertices())
-    hexagon_body.CreateFixture(shape=hexagon_shape, density=1.0)
+    body.CreateFixture(shape=hexagon_shape, density=1.0)
     
     running = True
     while running:
@@ -38,17 +38,15 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
         
-        # Clear screen
         screen.fill(BLACK)
         
-        # Draw the Box2D hexagon
-        for fixture in hexagon_body.fixtures:
+        for fixture in body.fixtures:
             shape = fixture.shape
             vertices = []
             for vertex in shape.vertices:
                 # Convert Box2D coordinates to screen coordinates
-                x = hexagon_body.position.x * PPM + vertex[0] * PPM
-                y = SCREEN_HEIGHT - (hexagon_body.position.y * PPM + vertex[1] * PPM)
+                x = body.position.x * PPM + vertex[0] * PPM
+                y = SCREEN_HEIGHT - (body.position.y * PPM + vertex[1] * PPM)
                 vertices.append((x, y))
             
             # Draw green outline
