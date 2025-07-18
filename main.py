@@ -1,7 +1,9 @@
 import pygame
 import Box2D
 import math
+
 from src.cell_hexagon import CellHexagon
+from src.organism import Organism
 from src.organism_rendering import OrganismRendering
 from src.screen import Screen
 
@@ -18,7 +20,8 @@ def main():
 
     world = Box2D.b2World(gravity=(0, 0))
     cell_hexagon = CellHexagon(0, 0, ORGANISM_CELL_RADIUS, GREEN)
-    organism_rendering = OrganismRendering(world, cell_hexagon, screen.center())
+    organism = Organism(world, cell_hexagon, screen.center())
+    organism_rendering = OrganismRendering(organism)
 
     running = True
     while running:
