@@ -19,7 +19,7 @@ def main():
     clock = pygame.time.Clock()
 
     world = Box2D.b2World(gravity=(0, 0))
-    cell_hexagon = Cell(0, 0, ORGANISM_CELL_RADIUS, GREEN)
+    cell_hexagon = Cell((0, 0, 0), ORGANISM_CELL_RADIUS, GREEN)
     organism = Organism(world, cell_hexagon, screen.center())
     organism_rendering = OrganismRendering(organism, screen)
 
