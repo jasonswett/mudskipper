@@ -1,6 +1,6 @@
 import math
 
-class CellHexagon:
+class Cell:
     def __init__(self, center_x, center_y, radius, color):
         self.center_x = center_x
         self.center_y = center_y
