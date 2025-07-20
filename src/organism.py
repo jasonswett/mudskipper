@@ -17,4 +17,4 @@ class Organism:
 
     def update_clock(self):
         for cell in self.cells():
-            cell.update_clock(self.cellular_body)
+            cell.update_clock()

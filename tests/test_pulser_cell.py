@@ -8,8 +8,8 @@ def test_clock_tick():
     cellular_body = CellularBody([pulser_cell])
 
     for i in range(PulserCell.PULSE_INTERVAL):
-        pulser_cell.update_clock(cellular_body)
+        pulser_cell.update_clock()
     assert pulser_cell.fill_color == PulserCell.PULSE_COLOR
 
-    pulser_cell.update_clock(cellular_body)
+    pulser_cell.update_clock()
     assert pulser_cell.fill_color == original_fill_color

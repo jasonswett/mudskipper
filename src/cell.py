@@ -14,7 +14,7 @@ class Cell:
         self.clock_tick_count = 0
         self.ticks_left_before_unstimulated = 0
 
-    def update_clock(self, _):
+    def update_clock(self):
         self.clock_tick_count += 1
         if self.ticks_left_before_unstimulated > 0:
             self.fill_color = self.STIMULATION_COLOR

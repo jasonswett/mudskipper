@@ -31,11 +31,11 @@ def test_stimulation_color():
     cell = Cell((1, -1, 0), 1, green, original_fill_color)
 
     cell.stimulate()
-    cell.update_clock(None)
+    cell.update_clock()
     assert cell.fill_color == Cell.STIMULATION_COLOR
 
     for i in range(Cell.REFRACTORY_PERIOD):
-        cell.update_clock(None)
+        cell.update_clock()
     assert cell.fill_color == original_fill_color
 
 def test_refractory_period():
@@ -44,10 +44,10 @@ def test_refractory_period():
     cell = Cell((1, -1, 0), 1, green, original_fill_color)
 
     cell.stimulate()
-    cell.update_clock(None)
+    cell.update_clock()
 
     for i in range(Cell.REFRACTORY_PERIOD - 1):
-        cell.update_clock(None)
+        cell.update_clock()
     assert cell.fill_color == Cell.STIMULATION_COLOR
 
 def test_stimulate_neighbor():

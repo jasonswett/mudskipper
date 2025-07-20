@@ -8,11 +8,11 @@ class PulserCell(Cell):
         super().__init__(position, radius, border_color, fill_color)
         self.original_fill_color = fill_color
 
-    def update_clock(self, cellular_body):
-        super().update_clock(cellular_body)
+    def update_clock(self):
+        super().update_clock()
         if self.clock_tick_count % self.PULSE_INTERVAL == 0:
             self.fill_color = self.PULSE_COLOR
-            for neighbor in cellular_body.neighbors(self):
+            for neighbor in self.neighbors:
                 neighbor.stimulate()
         else:
             self.fill_color = self.original_fill_color
