@@ -2,7 +2,7 @@ import math
 
 class Cell:
     STIMULATION_COLOR = (255, 255, 0)
-    REFRACTORY_PERIOD = 5
+    STIMULATION_DURATION = 5
 
     def __init__(self, position, radius, border_color, fill_color):
         self.position = position
@@ -23,7 +23,7 @@ class Cell:
             self.fill_color = self.original_fill_color
 
     def stimulate(self):
-        self.ticks_left_before_unstimulated = self.REFRACTORY_PERIOD
+        self.ticks_left_before_unstimulated = self.STIMULATION_DURATION
 
     def vertices(self):
         vertices = []

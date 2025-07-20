@@ -34,7 +34,7 @@ def test_stimulation_color():
     cell.update_clock()
     assert cell.fill_color == Cell.STIMULATION_COLOR
 
-    for i in range(Cell.REFRACTORY_PERIOD):
+    for i in range(Cell.STIMULATION_DURATION):
         cell.update_clock()
     assert cell.fill_color == original_fill_color
 
@@ -46,7 +46,7 @@ def test_refractory_period():
     cell.stimulate()
     cell.update_clock()
 
-    for i in range(Cell.REFRACTORY_PERIOD - 1):
+    for i in range(Cell.STIMULATION_DURATION - 1):
         cell.update_clock()
     assert cell.fill_color == Cell.STIMULATION_COLOR
 
