@@ -1,4 +1,5 @@
 from src.cell import Cell
+from src.pulser_cell import PulserCell
 
 class CellBuilder:
     DEFAULT_RADIUS = 1
@@ -8,4 +9,7 @@ class CellBuilder:
         self.position = position
     
     def cell(self):
-        return Cell(self.position, self.DEFAULT_RADIUS, self.cell_gene.border_color(), self.cell_gene.fill_color())
+        if self.cell_gene.cell_type() == "pulser":
+            return PulserCell(self.position, self.DEFAULT_RADIUS, self.cell_gene.border_color(), self.cell_gene.fill_color())
+        else:
+            return Cell(self.position, self.DEFAULT_RADIUS, self.cell_gene.border_color(), self.cell_gene.fill_color())
