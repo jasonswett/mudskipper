@@ -6,6 +6,8 @@ from src.cell import Cell
 from src.cell_sequence import CellSequence
 from src.cell_builder import CellBuilder
 from src.cell_gene import CellGene
+from src.cellular_body import CellularBody
+
 from src.organism import Organism
 from src.organism_rendering import OrganismRendering
 from src.screen import Screen
@@ -42,7 +44,9 @@ def main():
         cell_builder = CellBuilder(gene, position)
         cells.append(cell_builder.cell())
 
-    organism = Organism(world, cells, screen.center())
+    cellular_body = CellularBody(cells)
+
+    organism = Organism(world, cellular_body, screen.center())
     organism_rendering = OrganismRendering(organism, screen)
 
     running = True

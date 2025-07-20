@@ -2,6 +2,7 @@ import pytest
 import Box2D
 from src.organism import Organism
 from src.cell import Cell
+from src.cellular_body import CellularBody
 
 def test_organism_initialization():
     world = Box2D.b2World()
@@ -10,7 +11,8 @@ def test_organism_initialization():
         Cell((1, 0, -1), 1, (0, 255, 0), (0, 0, 0))
     ]
     position = (5, 10)
-    organism = Organism(world, cells, position)
+    cellular_body = CellularBody(cells)
+    organism = Organism(world, cellular_body, position)
     
     assert organism.body.position.x == 5
     assert organism.body.position.y == 10
@@ -42,6 +44,6 @@ def test_neighbors():
     ]
 
     world = Box2D.b2World()
-    organism = Organism(world, cells, (0, 0))
+    organism = Organism(world, CellularBody(cells), (0, 0))
     assert cell_straight_up in organism.neighbors(cell_origin)
     assert cell_down_right in organism.neighbors(cell_origin)

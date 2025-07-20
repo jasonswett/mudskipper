@@ -28,7 +28,7 @@ def test_cell_coordinate_relationships():
 def test_stimulation_color():
     green = (0, 255, 0)
     original_fill_color = (0, 0, 0)
-    cell = Cell((1, -1, 0), 10, green, original_fill_color)
+    cell = Cell((1, -1, 0), 1, green, original_fill_color)
 
     cell.stimulate()
     cell.update_clock(None)
@@ -41,7 +41,7 @@ def test_stimulation_color():
 def test_refractory_period():
     green = (0, 255, 0)
     original_fill_color = (0, 0, 0)
-    cell = Cell((1, -1, 0), 10, green, original_fill_color)
+    cell = Cell((1, -1, 0), 1, green, original_fill_color)
 
     cell.stimulate()
     cell.update_clock(None)
@@ -49,3 +49,7 @@ def test_refractory_period():
     for i in range(Cell.REFRACTORY_PERIOD - 1):
         cell.update_clock(None)
     assert cell.fill_color == Cell.STIMULATION_COLOR
+
+def test_stimulate_neighbor():
+    cell = Cell((0, 0, 0), 1, (0, 0, 0), (0, 0, 0))
+    neighbor_cell = Cell((0, 1, -1), 1, (0, 0, 0), (0, 0, 0))

@@ -7,7 +7,7 @@ class OrganismRendering:
 
     def cell_renderings(self):
         cell_renderings = []
-        for cell in self.organism.cells:
+        for cell in self.organism.cells():
             vertices = []
             for vertex in cell.vertices():
                 vertices.append((self.vertex_x(vertex), self.vertex_y(vertex)))
