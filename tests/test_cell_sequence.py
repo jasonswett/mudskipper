@@ -9,6 +9,6 @@ def test_cell_sequence():
     ])
 
     cells = cell_sequence.cells
-    assert cells[2].x == 2
-    assert cells[2].y == 0
-    assert cells[2].z == 0
+    assert cells[2].q == 2
+    assert cells[2].r == 0
+    assert cells[2].s == 0
