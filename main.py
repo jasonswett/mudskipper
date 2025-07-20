@@ -24,6 +24,7 @@ def main():
     cell_sequence = CellSequence([
         (0, 0, 0),
         (1, 0, -1),
+        (0, 1, -1),
     ])
 
     organism = Organism(world, cell_sequence.cells, screen.center())
