@@ -1,11 +1,12 @@
 import math
 
 class Cell:
-    def __init__(self, position, radius, color):
+    def __init__(self, position, radius, border_color, fill_color):
         self.position = position
         self.q, self.r, self.s = position
         self.radius = radius
-        self.color = color
+        self.border_color = border_color
+        self.fill_color = fill_color
 
     def vertices(self):
         vertices = []
