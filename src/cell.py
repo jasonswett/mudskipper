@@ -7,6 +7,10 @@ class Cell:
         self.radius = radius
         self.border_color = border_color
         self.fill_color = fill_color
+        self.clock_tick_count = 0
+
+    def update_clock(self):
+        self.clock_tick_count += 1
 
     def vertices(self):
         vertices = []

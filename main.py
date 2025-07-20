@@ -50,8 +50,9 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
         
+        organism.update_clock()
         display.fill(BLACK)
-        
+
         for cell_rendering in organism_rendering.cell_renderings():
             pygame.draw.polygon(display, cell_rendering['fill_color'], cell_rendering['vertices'])
             pygame.draw.polygon(display, cell_rendering['border_color'], cell_rendering['vertices'], width=2)

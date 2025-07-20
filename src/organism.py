@@ -11,3 +11,7 @@ class Organism:
         for cell in cells:
             hexagon_shape = Box2D.b2PolygonShape(vertices=cell.vertices())
             self.body.CreateFixture(shape=hexagon_shape, density=1.0)
+
+    def update_clock(self):
+        for cell in self.cells:
+            cell.update_clock()
