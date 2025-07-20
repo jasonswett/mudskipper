@@ -24,3 +24,15 @@ def test_cell_coordinate_relationships():
     cell3 = Cell((1, 1, -2), radius, (0, 255, 0), (0, 0, 0))
     assert cell3.center_x() - cell2.center_x() == 0
     assert (cell3.center_x() - cell1.center_x()) - 3.464 < 0.001
+
+def test_stimulation_color():
+    green = (0, 255, 0)
+    black = (0, 0, 0)
+    cell = Cell((1, -1, 0), 10, green, black)
+
+    cell.stimulate()
+    cell.update_clock(None)
+    assert cell.fill_color == Cell.STIMULATION_COLOR
+
+    cell.update_clock(None)
+    assert cell.fill_color == black

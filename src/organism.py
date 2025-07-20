@@ -14,7 +14,7 @@ class Organism:
 
     def update_clock(self):
         for cell in self.cells:
-            cell.update_clock()
+            cell.update_clock(self)
 
     def neighbors(self, cell):
         neighbors = []
