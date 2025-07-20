@@ -34,11 +34,6 @@ def main():
 
     cell_sequence = CellSequence(deltas)
 
-    for cell in cell_sequence.cells:
-        print(cell.q, cell.r, cell.s)
-        print(cell.center_x(), cell.center_y())
-        print()
-
     organism = Organism(world, cell_sequence.cells, screen.center())
     organism_rendering = OrganismRendering(organism, screen)
 
