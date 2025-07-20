@@ -3,6 +3,7 @@ import Box2D
 import math
 
 from src.cell import Cell
+from src.cell_sequence import CellSequence
 from src.organism import Organism
 from src.organism_rendering import OrganismRendering
 from src.screen import Screen
@@ -19,8 +20,13 @@ def main():
     clock = pygame.time.Clock()
 
     world = Box2D.b2World(gravity=(0, 0))
-    cell = Cell((0, 0, 0), ORGANISM_CELL_RADIUS, GREEN)
-    organism = Organism(world, cell, screen.center())
+
+    cell_sequence = CellSequence([
+        (0, 0, 0),
+        (1, 0, -1),
+    ])
+
+    organism = Organism(world, cell_sequence.cells, screen.center())
     organism_rendering = OrganismRendering(organism, screen)
 
     running = True
@@ -32,7 +38,7 @@ def main():
         display.fill(BLACK)
         
         for position in organism_rendering.screen_vertex_positions():
-            pygame.draw.polygon(display, cell.color, position, width=2)
+            pygame.draw.polygon(display, GREEN, position, width=2)
         
         pygame.display.flip()
         clock.tick(60)
