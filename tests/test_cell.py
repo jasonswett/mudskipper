@@ -27,12 +27,25 @@ def test_cell_coordinate_relationships():
 
 def test_stimulation_color():
     green = (0, 255, 0)
-    black = (0, 0, 0)
-    cell = Cell((1, -1, 0), 10, green, black)
+    original_fill_color = (0, 0, 0)
+    cell = Cell((1, -1, 0), 10, green, original_fill_color)
 
     cell.stimulate()
     cell.update_clock(None)
     assert cell.fill_color == Cell.STIMULATION_COLOR
 
+    for i in range(Cell.REFRACTORY_PERIOD):
+        cell.update_clock(None)
+    assert cell.fill_color == original_fill_color
+
+def test_refractory_period():
+    green = (0, 255, 0)
+    original_fill_color = (0, 0, 0)
+    cell = Cell((1, -1, 0), 10, green, original_fill_color)
+
+    cell.stimulate()
     cell.update_clock(None)
-    assert cell.fill_color == black
+
+    for i in range(Cell.REFRACTORY_PERIOD - 1):
+        cell.update_clock(None)
+    assert cell.fill_color == Cell.STIMULATION_COLOR

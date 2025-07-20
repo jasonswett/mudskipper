@@ -2,6 +2,7 @@ import math
 
 class Cell:
     STIMULATION_COLOR = (255, 255, 0)
+    REFRACTORY_PERIOD = 5
 
     def __init__(self, position, radius, border_color, fill_color):
         self.position = position
@@ -11,18 +12,18 @@ class Cell:
         self.fill_color = fill_color
         self.original_fill_color = fill_color
         self.clock_tick_count = 0
-        self.stimulated_count = 0
+        self.ticks_left_before_unstimulated = 0
 
     def update_clock(self, organism):
         self.clock_tick_count += 1
-        if self.stimulated_count > 0:
+        if self.ticks_left_before_unstimulated > 0:
             self.fill_color = self.STIMULATION_COLOR
-            self.stimulated_count -= 1
+            self.ticks_left_before_unstimulated -= 1
         else:
             self.fill_color = self.original_fill_color
 
     def stimulate(self):
-        self.stimulated_count = 1
+        self.ticks_left_before_unstimulated = self.REFRACTORY_PERIOD
 
     def vertices(self):
         vertices = []
