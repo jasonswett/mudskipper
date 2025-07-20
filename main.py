@@ -24,9 +24,9 @@ def main():
     world = Box2D.b2World(gravity=(0, 0))
 
     cell_genes = [
-        CellGene("000"),
-        CellGene("001"),
-        CellGene("010"),
+        CellGene("00011"),
+        CellGene("00100"),
+        CellGene("01000"),
     ]
 
     deltas = [
