@@ -15,3 +15,24 @@ class Organism:
     def update_clock(self):
         for cell in self.cells:
             cell.update_clock()
+
+    def neighbors(self, cell):
+        neighbors = []
+
+        neighbor_offsets = [
+            (1, 0, -1),
+            (1, -1, 0),
+            (0, -1, 1),
+            (-1, 0, 1),
+            (-1, 1, 0),
+            (0, 1, -1)
+        ]
+        
+        for other_cell in self.cells:
+            if other_cell != cell:
+                q_diff = other_cell.q - cell.q
+                r_diff = other_cell.r - cell.r
+                s_diff = other_cell.s - cell.s
+                if (q_diff, r_diff, s_diff) in neighbor_offsets:
+                    neighbors.append(other_cell)
+        return neighbors
