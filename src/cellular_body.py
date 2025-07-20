@@ -1,6 +1,8 @@
 class CellularBody:
     def __init__(self, cells):
         self.cells = cells
+        for cell in self.cells:
+            cell.neighbors = self.neighbors(cell)
 
     def is_legal(self):
         for i in range(len(self.cells)):
