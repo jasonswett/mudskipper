@@ -4,6 +4,7 @@ import math
 
 from src.cell import Cell
 from src.cell_sequence import CellSequence
+from src.cell_builder import CellBuilder
 from src.cell_gene import CellGene
 from src.organism import Organism
 from src.organism_rendering import OrganismRendering
@@ -35,9 +36,10 @@ def main():
     cell_sequence = CellSequence(deltas)
 
     cells = []
-    for position in cell_sequence.positions:
-        cell = Cell(position, ORGANISM_CELL_RADIUS, GREEN)
-        cells.append(cell)
+    for index, position in enumerate(cell_sequence.positions):
+        gene = cell_genes[index]
+        cell_builder = CellBuilder(gene, position)
+        cells.append(cell_builder.cell())
 
     organism = Organism(world, cells, screen.center())
     organism_rendering = OrganismRendering(organism, screen)
