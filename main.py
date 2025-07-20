@@ -27,6 +27,7 @@ def main():
         CellGene("00011"),
         CellGene("00100"),
         CellGene("01000"),
+        CellGene("10000"),
     ]
 
     deltas = [

@@ -2,13 +2,13 @@ from src.gene import Gene
 
 class CellGene(Gene):
     LEGAL_DELTAS = [
-        (0, 0, 0),
-        (0, -1, 1),
-        (1, -1, 0),
-        (1, 0, -1),
-        (0, 1, -1),
-        (-1, 1, 0),
-        (-1, 0, 1),
+        (0, 0, 0),  # 000, no difference
+        (0, -1, 1), # 001, straight up
+        (1, -1, 0), # 010, up-right
+        (1, 0, -1), # 011, down-right
+        (0, 1, -1), # 100, straight down
+        (-1, 1, 0), # 101, down-left
+        (-1, 0, 1), # 110, up-left
     ]
 
     FILL_COLORS_BY_CELL_TYPE = {
