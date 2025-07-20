@@ -4,6 +4,10 @@ class CellularBody:
         for cell in self.cells:
             cell.neighbors = self.neighbors(cell)
 
+    def update_clock(self):
+        for cell in self.cells:
+            cell.update_clock()
+
     def is_legal(self):
         for i in range(len(self.cells)):
             for j in range(i + 1, len(self.cells)):

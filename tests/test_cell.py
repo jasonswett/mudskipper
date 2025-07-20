@@ -26,9 +26,12 @@ def test_cell_coordinate_relationships():
     assert (cell3.center_x() - cell1.center_x()) - 3.464 < 0.001
 
 def test_stimulation_color():
+    from src.cellular_body import CellularBody
+
     green = (0, 255, 0)
     original_fill_color = (0, 0, 0)
     cell = Cell((1, -1, 0), 1, green, original_fill_color)
+    CellularBody([cell])
 
     cell.stimulate()
     cell.update_clock()
@@ -38,7 +41,7 @@ def test_stimulation_color():
         cell.update_clock()
     assert cell.fill_color == original_fill_color
 
-def test_refractory_period():
+def test_stimulation_duration():
     green = (0, 255, 0)
     original_fill_color = (0, 0, 0)
     cell = Cell((1, -1, 0), 1, green, original_fill_color)
@@ -51,5 +54,14 @@ def test_refractory_period():
     assert cell.fill_color == Cell.STIMULATION_COLOR
 
 def test_stimulate_neighbor():
+    from src.cellular_body import CellularBody
     cell = Cell((0, 0, 0), 1, (0, 0, 0), (0, 0, 0))
     neighbor_cell = Cell((0, 1, -1), 1, (0, 0, 0), (0, 0, 0))
+
+    cellular_body = CellularBody([cell, neighbor_cell])
+    cell.stimulate()
+    assert neighbor_cell.stimulation_count == 0
+
+    for i in range(Cell.STIMULATION_DURATION):
+        cellular_body.update_clock()
+    assert neighbor_cell.stimulation_count == 1

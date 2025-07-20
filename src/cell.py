@@ -13,17 +13,26 @@ class Cell:
         self.original_fill_color = fill_color
         self.clock_tick_count = 0
         self.ticks_left_before_unstimulated = 0
+        self.stimulation_count = 0
+        self.neighbors = []
 
     def update_clock(self):
         self.clock_tick_count += 1
         if self.ticks_left_before_unstimulated > 0:
             self.fill_color = self.STIMULATION_COLOR
             self.ticks_left_before_unstimulated -= 1
+            if self.ticks_left_before_unstimulated == 0:
+                self.stimulate_neighbors()
         else:
             self.fill_color = self.original_fill_color
 
     def stimulate(self):
+        self.stimulation_count += 1
         self.ticks_left_before_unstimulated = self.STIMULATION_DURATION
+
+    def stimulate_neighbors(self):
+        for neighbor in self.neighbors:
+            neighbor.stimulate()
 
     def vertices(self):
         vertices = []
