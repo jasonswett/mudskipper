@@ -18,4 +18,4 @@ class OrganismRendering:
         return Screen.to_pixels(self.organism.body.position.x) + Screen.to_pixels(vertex[0])
 
     def vertex_y(self, vertex):
-        return self.screen.height_in_pixels() - (Screen.to_pixels(self.organism.body.position.y) + Screen.to_pixels(vertex[1]))
+        return Screen.to_pixels(self.organism.body.position.y) + Screen.to_pixels(vertex[1])

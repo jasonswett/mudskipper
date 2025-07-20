@@ -10,9 +10,9 @@ class CellSequence:
         self.cells = [root_cell]
 
         for delta in deltas[1:]:
-            last_x, last_y, last_z = last_coordinates
-            x_delta, y_delta, z_delta = delta
-            coordinates = (last_x + x_delta, last_y + y_delta, last_z + z_delta)
+            last_q, last_r, last_s = last_coordinates
+            q_delta, r_delta, s_delta = delta
+            coordinates = (last_q + q_delta, last_r + r_delta, last_s + s_delta)
             cell = Cell(coordinates, self.DEFAULT_CELL_RADIUS, self.DEFAULT_CELL_COLOR)
             self.cells.append(cell)
             last_coordinates = coordinates

@@ -4,6 +4,7 @@ import math
 
 from src.cell import Cell
 from src.cell_sequence import CellSequence
+from src.cell_gene import CellGene
 from src.organism import Organism
 from src.organism_rendering import OrganismRendering
 from src.screen import Screen
@@ -21,11 +22,22 @@ def main():
 
     world = Box2D.b2World(gravity=(0, 0))
 
-    cell_sequence = CellSequence([
-        (0, 0, 0),
-        (1, 0, -1),
-        (0, 1, -1),
-    ])
+    cell_genes = [
+        CellGene("000"),
+        CellGene("001"),
+        CellGene("010"),
+    ]
+
+    deltas = [
+        cell_gene.delta() for cell_gene in cell_genes
+    ]
+
+    cell_sequence = CellSequence(deltas)
+
+    for cell in cell_sequence.cells:
+        print(cell.q, cell.r, cell.s)
+        print(cell.center_x(), cell.center_y())
+        print()
 
     organism = Organism(world, cell_sequence.cells, screen.center())
     organism_rendering = OrganismRendering(organism, screen)
