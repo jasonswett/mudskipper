@@ -34,7 +34,12 @@ def main():
 
     cell_sequence = CellSequence(deltas)
 
-    organism = Organism(world, cell_sequence.cells, screen.center())
+    cells = []
+    for position in cell_sequence.positions:
+        cell = Cell(position, ORGANISM_CELL_RADIUS, GREEN)
+        cells.append(cell)
+
+    organism = Organism(world, cells, screen.center())
     organism_rendering = OrganismRendering(organism, screen)
 
     running = True

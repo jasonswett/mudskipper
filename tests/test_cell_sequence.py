@@ -8,7 +8,5 @@ def test_cell_sequence():
         (1, -1, 0),
     ])
 
-    cells = cell_sequence.cells
-    assert cells[2].q == 1
-    assert cells[2].r == -2
-    assert cells[2].s == 1
+    positions = cell_sequence.positions
+    assert positions[2] == (1, -2, 1)

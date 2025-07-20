@@ -1,8 +1,9 @@
 import math
 
 class Cell:
-    def __init__(self, coordinates, radius, color):
-        self.q, self.r, self.s = coordinates
+    def __init__(self, position, radius, color):
+        self.position = position
+        self.q, self.r, self.s = position
         self.radius = radius
         self.color = color
 
