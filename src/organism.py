@@ -6,6 +6,7 @@ class Organism:
         body_def.type = Box2D.b2_staticBody
         body_def.position = position
         self.body = world.CreateBody(body_def)
+        self.cells = cells
 
         for cell in cells:
             hexagon_shape = Box2D.b2PolygonShape(vertices=cell.vertices())

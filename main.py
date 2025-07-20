@@ -52,8 +52,9 @@ def main():
         
         display.fill(BLACK)
         
-        for position in organism_rendering.screen_vertex_positions():
-            pygame.draw.polygon(display, GREEN, position, width=2)
+        for cell_rendering in organism_rendering.cell_renderings():
+            pygame.draw.polygon(display, cell_rendering['fill_color'], cell_rendering['vertices'])
+            pygame.draw.polygon(display, cell_rendering['border_color'], cell_rendering['vertices'], width=2)
         
         pygame.display.flip()
         clock.tick(60)
