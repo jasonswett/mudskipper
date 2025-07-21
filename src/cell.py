@@ -2,8 +2,9 @@ import math
 
 class Cell:
     STIMULATION_COLOR = (255, 255, 0)
-    STIMULATION_DURATION = 10
-    STIMULATION_PROPAGATION_DELAY = 10
+    STIMULATION_DURATION = 8
+    STIMULATION_PROPAGATION_DELAY = 1
+    REFRACTORY_PERIOD = 20
 
     def __init__(self, position, radius, border_color, fill_color):
         self.position = position
@@ -17,6 +18,7 @@ class Cell:
         self.ticks_left_before_stimulation_propagation = 0
         self.stimulation_count = 0
         self.neighbors = []
+        self.last_stimulation_tick = -self.REFRACTORY_PERIOD
 
     def update_clock(self):
         self.clock_tick_count += 1
@@ -33,8 +35,11 @@ class Cell:
                 self.stimulate_neighbors()
 
     def stimulate(self):
+        if self.clock_tick_count - self.last_stimulation_tick < self.REFRACTORY_PERIOD:
+            return
         self.stimulation_count += 1
         self.ticks_left_before_unstimulated = self.STIMULATION_DURATION
+        self.last_stimulation_tick = self.clock_tick_count
 
     def stimulate_neighbors(self):
         for neighbor in self.neighbors:

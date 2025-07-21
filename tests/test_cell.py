@@ -62,10 +62,24 @@ def test_stimulate_neighbor():
     cell.stimulate()
     assert neighbor_cell.stimulation_count == 0
 
-    for i in range(Cell.STIMULATION_DURATION):
+    for i in range(Cell.STIMULATION_DURATION - 1):
         cellular_body.update_clock()
     assert neighbor_cell.stimulation_count == 0
 
     for i in range(Cell.STIMULATION_PROPAGATION_DELAY):
         cellular_body.update_clock()
     assert neighbor_cell.stimulation_count == 1
+
+def test_refractory_period():
+    from src.cellular_body import CellularBody
+    cell = Cell((0, 0, 0), 1, (0, 0, 0), (0, 0, 0))
+    neighbor_cell = Cell((0, 1, -1), 1, (0, 0, 0), (0, 0, 0))
+
+    cellular_body = CellularBody([cell, neighbor_cell])
+    cell.stimulate()
+
+    ticks_until_next_stimulation = Cell.STIMULATION_DURATION + Cell.STIMULATION_PROPAGATION_DELAY
+    for i in range(ticks_until_next_stimulation * 2):
+        cellular_body.update_clock()
+
+    assert cell.stimulation_count == 1

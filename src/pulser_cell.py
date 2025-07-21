@@ -1,7 +1,7 @@
 from src.cell import Cell
 
 class PulserCell(Cell):
-    PULSE_INTERVAL = 100
+    PULSE_INTERVAL = 40
 
     def __init__(self, position, radius, border_color, fill_color):
         super().__init__(position, radius, border_color, fill_color)
