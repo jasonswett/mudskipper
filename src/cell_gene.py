@@ -41,15 +41,19 @@ class CellGene(Gene):
     def random_binary_number(bit_count):
         return "".join([str(random.randint(0, 1)) for i in range(bit_count)])
 
-    def placement_delta_section(self):
+    def section(self, section_name):
         start = 0
-        end = self.GENE_SECTION_LENGTHS['placement_delta']
-        return self.value[start:end]
+        for name in self.GENE_SECTION_LENGTHS:
+            if name == section_name:
+                end = start + self.GENE_SECTION_LENGTHS[name]
+                return self.value[start:end]
+            start += self.GENE_SECTION_LENGTHS[name]
+
+    def placement_delta_section(self):
+        return self.section('placement_delta')
 
     def cell_type_section(self):
-        start = self.GENE_SECTION_LENGTHS['placement_delta']
-        end = start + self.GENE_SECTION_LENGTHS['cell_type']
-        return self.value[start:end]
+        return self.section('cell_type')
 
     def placement_delta(self):
         placement_delta_index = int(self.placement_delta_section(), 2)
