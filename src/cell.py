@@ -6,13 +6,14 @@ class Cell:
     STIMULATION_PROPAGATION_DELAY = 1
     REFRACTORY_PERIOD = 20
 
-    def __init__(self, position, radius, border_color, fill_color):
+    def __init__(self, position, radius, border_color, fill_color, movement_delta):
         self.position = position
         self.q, self.r, self.s = position
         self.radius = radius
         self.border_color = border_color
         self.fill_color = fill_color
         self.original_fill_color = fill_color
+        self.movement_delta = movement_delta
         self.clock_tick_count = 0
         self.ticks_left_before_unstimulated = 0
         self.ticks_left_before_stimulation_propagation = 0
