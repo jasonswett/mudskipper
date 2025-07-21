@@ -17,14 +17,7 @@ GREEN = (0, 255, 0)
 ORGANISM_COUNT = 3
 ORGANISM_CELL_COUNT = 4
 
-def main():
-    pygame.init()
-    screen = Screen(40, 30) # unit: meters
-    display = pygame.display.set_mode(screen.size_in_pixels())
-    pygame.display.set_caption("Mudskipper")
-    clock = pygame.time.Clock()
-    world = Box2D.b2World(gravity=(0, 0))
-
+def draw_organisms(world, screen, display):
     organisms = []
     remaining_organisms = ORGANISM_COUNT
 
@@ -41,6 +34,17 @@ def main():
             organisms.append(Organism(world, cellular_body, (x - 10 + index * 10, y)))
             remaining_organisms -= 1
 
+    return organisms
+
+def main():
+    pygame.init()
+    screen = Screen(40, 30) # unit: meters
+    display = pygame.display.set_mode(screen.size_in_pixels())
+    pygame.display.set_caption("Mudskipper")
+    clock = pygame.time.Clock()
+    world = Box2D.b2World(gravity=(0, 0))
+    organisms = draw_organisms(world, screen, display)
+
     running = True
     while running:
         for event in pygame.event.get():
@@ -48,19 +52,8 @@ def main():
                 running = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    # Clear existing organisms
                     organisms.clear()
-
-                    # Create new batch of organisms
-                    for i in range(ORGANISM_COUNT):
-                        cell_genes = []
-                        for j in range(random.randint(2, 8)):
-                            cell_genes.append(CellGene.random())
-
-                        cellular_body_builder = CellularBodyBuilder(cell_genes)
-                        cellular_body = cellular_body_builder.cellular_body()
-                        x, y = screen.center()
-                        organisms.append(Organism(world, cellular_body, (x - 10 + i * 10, y)))
+                    organisms = draw_organisms(world, screen, display)
 
         display.fill(BLACK)
 
@@ -71,7 +64,7 @@ def main():
             for cell_rendering in organism_rendering.cell_renderings():
                 pygame.draw.polygon(display, cell_rendering['fill_color'], cell_rendering['vertices'])
                 pygame.draw.polygon(display, cell_rendering['border_color'], cell_rendering['vertices'], width=2)
-        
+
         pygame.display.flip()
         clock.tick(60)
         
