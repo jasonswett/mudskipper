@@ -15,7 +15,6 @@ ORGANISM_CELL_RADIUS = 1
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
 ORGANISM_COUNT = 3
-ORGANISM_CELL_COUNT = 4
 
 def draw_organisms(world, screen, display):
     organisms = []
@@ -23,7 +22,7 @@ def draw_organisms(world, screen, display):
 
     while remaining_organisms > 0:
         cell_genes = []
-        for j in range(ORGANISM_CELL_COUNT):
+        for j in range(random.randint(2, 6)):
             cell_genes.append(CellGene.random())
 
         cellular_body_builder = CellularBodyBuilder(cell_genes)
