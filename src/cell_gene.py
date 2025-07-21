@@ -2,7 +2,12 @@ from src.gene import Gene
 import random
 
 class CellGene(Gene):
-    LEGAL_placement_deltaS = [
+    GENE_SECTION_LENGTHS = {
+        'placement_delta': 3,
+        'cell_type': 2,
+    }
+
+    LEGAL_DELTAS = [
         (0, 0, 0),  # 000, no difference
         (0, -1, 1), # 001, straight up
         (1, -1, 0), # 010, up-right
@@ -28,8 +33,8 @@ class CellGene(Gene):
 
     @staticmethod
     def random():
-        placement_delta = CellGene.random_binary_number(3)
-        cell_type = CellGene.random_binary_number(2)
+        placement_delta = CellGene.random_binary_number(CellGene.GENE_SECTION_LENGTHS['placement_delta'])
+        cell_type = CellGene.random_binary_number(CellGene.GENE_SECTION_LENGTHS['cell_type'])
         return CellGene(placement_delta + cell_type)
 
     @staticmethod
@@ -37,14 +42,18 @@ class CellGene(Gene):
         return "".join([str(random.randint(0, 1)) for i in range(bit_count)])
 
     def placement_delta_section(self):
-        return self.value[:3]
+        start = 0
+        end = self.GENE_SECTION_LENGTHS['placement_delta']
+        return self.value[start:end]
 
     def cell_type_section(self):
-        return self.value[3:5]
+        start = self.GENE_SECTION_LENGTHS['placement_delta']
+        end = start + self.GENE_SECTION_LENGTHS['cell_type']
+        return self.value[start:end]
 
     def placement_delta(self):
         placement_delta_index = int(self.placement_delta_section(), 2)
-        return self.LEGAL_placement_deltaS[placement_delta_index]
+        return self.LEGAL_DELTAS[placement_delta_index]
 
     def fill_color(self):
         return self.FILL_COLORS_BY_CELL_TYPE[self.cell_type()]
