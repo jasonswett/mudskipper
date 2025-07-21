@@ -13,6 +13,7 @@ from src.screen import Screen
 ORGANISM_CELL_RADIUS = 1
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
+ORGANISM_COUNT = 3
 
 def main():
     pygame.init()
@@ -20,12 +21,11 @@ def main():
     display = pygame.display.set_mode(screen.size_in_pixels())
     pygame.display.set_caption("Mudskipper")
     clock = pygame.time.Clock()
-
     world = Box2D.b2World(gravity=(0, 0))
 
     organisms = []
 
-    for i in range(3):
+    for i in range(ORGANISM_COUNT):
         cell_genes = [
             CellGene("00011"),
             CellGene("00100"),
