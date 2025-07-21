@@ -28,20 +28,36 @@ def main():
 
     for i in range(ORGANISM_COUNT):
         cell_genes = []
-        for j in range(random.randint(2, 8)):
+        for j in range(random.randint(2, 16)):
             cell_genes.append(CellGene.random())
 
         cellular_body_builder = CellularBodyBuilder(cell_genes)
         cellular_body = cellular_body_builder.cellular_body()
         x, y = screen.center()
-        organisms.append(Organism(world, cellular_body, (x - 10 + i * 10, y)))
+        if cellular_body.is_legal():
+            organisms.append(Organism(world, cellular_body, (x - 10 + i * 10, y)))
 
     running = True
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-        
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    # Clear existing organisms
+                    organisms.clear()
+
+                    # Create new batch of organisms
+                    for i in range(ORGANISM_COUNT):
+                        cell_genes = []
+                        for j in range(random.randint(2, 8)):
+                            cell_genes.append(CellGene.random())
+
+                        cellular_body_builder = CellularBodyBuilder(cell_genes)
+                        cellular_body = cellular_body_builder.cellular_body()
+                        x, y = screen.center()
+                        organisms.append(Organism(world, cellular_body, (x - 10 + i * 10, y)))
+
         display.fill(BLACK)
 
         for organism in organisms:
