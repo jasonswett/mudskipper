@@ -23,17 +23,20 @@ def main():
 
     world = Box2D.b2World(gravity=(0, 0))
 
-    cell_genes = [
-        CellGene("00011"),
-        CellGene("00100"),
-        CellGene("01000"),
-        CellGene("10000"),
-    ]
+    organisms = []
 
-    cellular_body_builder = CellularBodyBuilder(cell_genes)
-    cellular_body = cellular_body_builder.cellular_body()
-    organism = Organism(world, cellular_body, screen.center())
-    organism_rendering = OrganismRendering(organism, screen)
+    for i in range(3):
+        cell_genes = [
+            CellGene("00011"),
+            CellGene("00100"),
+            CellGene("01000"),
+            CellGene("10000"),
+        ]
+
+        cellular_body_builder = CellularBodyBuilder(cell_genes)
+        cellular_body = cellular_body_builder.cellular_body()
+        x, y = screen.center()
+        organisms.append(Organism(world, cellular_body, (x - 10 + i * 10, y)))
 
     running = True
     while running:
@@ -41,12 +44,15 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
         
-        organism.update_clock()
         display.fill(BLACK)
 
-        for cell_rendering in organism_rendering.cell_renderings():
-            pygame.draw.polygon(display, cell_rendering['fill_color'], cell_rendering['vertices'])
-            pygame.draw.polygon(display, cell_rendering['border_color'], cell_rendering['vertices'], width=2)
+        for organism in organisms:
+            organism.update_clock()
+            organism_rendering = OrganismRendering(organism, screen)
+
+            for cell_rendering in organism_rendering.cell_renderings():
+                pygame.draw.polygon(display, cell_rendering['fill_color'], cell_rendering['vertices'])
+                pygame.draw.polygon(display, cell_rendering['border_color'], cell_rendering['vertices'], width=2)
         
         pygame.display.flip()
         clock.tick(60)
