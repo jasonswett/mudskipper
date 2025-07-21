@@ -3,10 +3,8 @@ import Box2D
 import math
 
 from src.cell import Cell
-from src.cell_sequence import CellSequence
-from src.cell_builder import CellBuilder
 from src.cell_gene import CellGene
-from src.cellular_body import CellularBody
+from src.cellular_body_builder import CellularBodyBuilder
 
 from src.organism import Organism
 from src.organism_rendering import OrganismRendering
@@ -32,20 +30,8 @@ def main():
         CellGene("10000"),
     ]
 
-    deltas = [
-        cell_gene.delta() for cell_gene in cell_genes
-    ]
-
-    cell_sequence = CellSequence(deltas)
-
-    cells = []
-    for index, position in enumerate(cell_sequence.positions):
-        gene = cell_genes[index]
-        cell_builder = CellBuilder(gene, position)
-        cells.append(cell_builder.cell())
-
-    cellular_body = CellularBody(cells)
-
+    cellular_body_builder = CellularBodyBuilder(cell_genes)
+    cellular_body = cellular_body_builder.cellular_body()
     organism = Organism(world, cellular_body, screen.center())
     organism_rendering = OrganismRendering(organism, screen)
 
