@@ -9,7 +9,5 @@ class CellBuilder:
         self.position = position
     
     def cell(self):
-        if self.cell_gene.cell_type() == "pulser":
-            return PulserCell(self.position, self.DEFAULT_RADIUS, self.cell_gene.border_color(), self.cell_gene.fill_color())
-        else:
-            return Cell(self.position, self.DEFAULT_RADIUS, self.cell_gene.border_color(), self.cell_gene.fill_color())
+        cell_class = PulserCell if self.cell_gene.cell_type() == "pulser" else Cell
+        return cell_class(self.position, self.DEFAULT_RADIUS, self.cell_gene.border_color(), self.cell_gene.fill_color())
