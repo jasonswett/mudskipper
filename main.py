@@ -3,8 +3,8 @@ import Box2D
 import math
 import random
 
+from src.genome import Genome
 from src.cell import Cell
-from src.cell_gene import CellGene
 from src.cellular_body_builder import CellularBodyBuilder
 
 from src.organism import Organism
@@ -20,15 +20,12 @@ def draw_organisms(world, screen, display):
     remaining_organisms = ORGANISM_COUNT
 
     while remaining_organisms > 0:
-        cell_genes = []
-        for j in range(random.randint(2, 6)):
-            cell_genes.append(CellGene.random())
-
-        cellular_body_builder = CellularBodyBuilder(cell_genes)
+        genome = Genome(random.randint(2, 6))
+        cellular_body_builder = CellularBodyBuilder(genome.cell_genes())
         cellular_body = cellular_body_builder.cellular_body()
-        x, y = screen.center()
         if cellular_body.is_legal():
             index = ORGANISM_COUNT - remaining_organisms
+            x, y = screen.center()
             organisms.append(Organism(world, cellular_body, (x - 10 + index * 10, y)))
             remaining_organisms -= 1
 
