@@ -37,9 +37,9 @@ def test_neighbors():
     cell_gene_down_right = CellGene("01100")
 
     cell_sequence = CellSequence([
-        cell_gene_origin.delta(),
-        cell_gene_straight_up.delta(),
-        cell_gene_down_right.delta(),
+        cell_gene_origin.placement_delta(),
+        cell_gene_straight_up.placement_delta(),
+        cell_gene_down_right.placement_delta(),
     ])
 
     cell_origin = CellBuilder(cell_gene_origin, cell_sequence.positions[0]).cell()

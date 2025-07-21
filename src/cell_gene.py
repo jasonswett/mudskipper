@@ -2,7 +2,7 @@ from src.gene import Gene
 import random
 
 class CellGene(Gene):
-    LEGAL_DELTAS = [
+    LEGAL_placement_deltaS = [
         (0, 0, 0),  # 000, no difference
         (0, -1, 1), # 001, straight up
         (1, -1, 0), # 010, up-right
@@ -28,23 +28,23 @@ class CellGene(Gene):
 
     @staticmethod
     def random():
-        delta = CellGene.random_binary_number(3)
+        placement_delta = CellGene.random_binary_number(3)
         cell_type = CellGene.random_binary_number(2)
-        return CellGene(delta + cell_type)
+        return CellGene(placement_delta + cell_type)
 
     @staticmethod
     def random_binary_number(bit_count):
         return "".join([str(random.randint(0, 1)) for i in range(bit_count)])
 
-    def delta_section(self):
+    def placement_delta_section(self):
         return self.value[:3]
 
     def cell_type_section(self):
         return self.value[3:5]
 
-    def delta(self):
-        delta_index = int(self.delta_section(), 2)
-        return self.LEGAL_DELTAS[delta_index]
+    def placement_delta(self):
+        placement_delta_index = int(self.placement_delta_section(), 2)
+        return self.LEGAL_placement_deltaS[placement_delta_index]
 
     def fill_color(self):
         return self.FILL_COLORS_BY_CELL_TYPE[self.cell_type()]
