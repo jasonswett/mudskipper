@@ -24,6 +24,7 @@ def draw_organisms(world, screen, display):
         cellular_body_builder = CellularBodyBuilder(genome.cell_genes())
         cellular_body = cellular_body_builder.cellular_body()
         if cellular_body.is_legal():
+            print(genome.value())
             index = ORGANISM_COUNT - remaining_organisms
             x, y = screen.center()
             organisms.append(Organism(world, cellular_body, (x - 10 + index * 10, y)))
