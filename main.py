@@ -27,10 +27,10 @@ def main():
 
     for i in range(ORGANISM_COUNT):
         cell_genes = [
-            CellGene("00011"),
-            CellGene("00100"),
-            CellGene("01000"),
-            CellGene("10000"),
+            CellGene.random(),
+            CellGene.random(),
+            CellGene.random(),
+            CellGene.random(),
         ]
 
         cellular_body_builder = CellularBodyBuilder(cell_genes)

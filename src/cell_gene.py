@@ -1,4 +1,5 @@
 from src.gene import Gene
+import random
 
 class CellGene(Gene):
     LEGAL_DELTAS = [
@@ -23,6 +24,16 @@ class CellGene(Gene):
 
     def __init__(self, value_or_length):
         super().__init__(value_or_length)
+
+    @staticmethod
+    def random():
+        delta = CellGene.random_binary_number(3)
+        cell_type = CellGene.random_binary_number(2)
+        return CellGene(delta + cell_type)
+
+    @staticmethod
+    def random_binary_number(bit_count):
+        return "".join([str(random.randint(0, 1)) for i in range(bit_count)])
 
     def delta_section(self):
         return self.value[:3]
