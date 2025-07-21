@@ -7,9 +7,10 @@ def test_clock_tick():
     pulser_cell = PulserCell((0, 0, 0), 1, (0, 0, 0), original_fill_color)
     cellular_body = CellularBody([pulser_cell])
 
-    for i in range(PulserCell.PULSE_INTERVAL):
+    for i in range(PulserCell.PULSE_INTERVAL + 1):
         pulser_cell.update_clock()
-    assert pulser_cell.fill_color == PulserCell.PULSE_COLOR
+    assert pulser_cell.fill_color == pulser_cell.STIMULATION_COLOR
 
-    pulser_cell.update_clock()
+    for i in range(pulser_cell.STIMULATION_DURATION):
+        pulser_cell.update_clock()
     assert pulser_cell.fill_color == original_fill_color

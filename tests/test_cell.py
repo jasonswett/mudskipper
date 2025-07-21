@@ -64,4 +64,8 @@ def test_stimulate_neighbor():
 
     for i in range(Cell.STIMULATION_DURATION):
         cellular_body.update_clock()
+    assert neighbor_cell.stimulation_count == 0
+
+    for i in range(Cell.STIMULATION_PROPAGATION_DELAY):
+        cellular_body.update_clock()
     assert neighbor_cell.stimulation_count == 1
