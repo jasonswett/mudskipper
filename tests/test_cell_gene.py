@@ -14,6 +14,17 @@ def test_cell_gene_initialization():
     assert f.cell(placement_delta_gene="110").placement_delta() == (-1, 0, 1)
     assert f.cell(placement_delta_gene="111").placement_delta() == (0, 0, 0)
 
+def test_movement_delta():
+    f = CellGeneFactory()
+    assert f.cell(movement_delta_gene="000").movement_delta() == (0, 0, 0)
+    assert f.cell(movement_delta_gene="001").movement_delta() == (0, -1, 1)
+    assert f.cell(movement_delta_gene="010").movement_delta() == (1, -1, 0)
+    assert f.cell(movement_delta_gene="011").movement_delta() == (1, 0, -1)
+    assert f.cell(movement_delta_gene="100").movement_delta() == (0, 1, -1)
+    assert f.cell(movement_delta_gene="101").movement_delta() == (-1, 1, 0)
+    assert f.cell(movement_delta_gene="110").movement_delta() == (-1, 0, 1)
+    assert f.cell(movement_delta_gene="111").movement_delta() == (0, 0, 0)
+
 def test_cell_type():
     f = CellGeneFactory()
     assert f.cell(cell_type_gene="00").cell_type() == "default"

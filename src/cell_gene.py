@@ -4,6 +4,7 @@ import random
 class CellGene(Gene):
     GENE_SECTION_LENGTHS = {
         'placement_delta': 3,
+        'movement_delta': 3,
         'cell_type': 2,
     }
 
@@ -33,9 +34,8 @@ class CellGene(Gene):
 
     @staticmethod
     def random():
-        placement_delta = CellGene.random_binary_number(CellGene.GENE_SECTION_LENGTHS['placement_delta'])
-        cell_type = CellGene.random_binary_number(CellGene.GENE_SECTION_LENGTHS['cell_type'])
-        return CellGene(placement_delta + cell_type)
+        total_cell_gene_length = sum(CellGene.GENE_SECTION_LENGTHS.values())
+        return CellGene(CellGene.random_binary_number(total_cell_gene_length))
 
     @staticmethod
     def random_binary_number(bit_count):
@@ -49,15 +49,14 @@ class CellGene(Gene):
                 return self.value[start:end]
             start += self.GENE_SECTION_LENGTHS[name]
 
-    def placement_delta_section(self):
-        return self.section('placement_delta')
-
-    def cell_type_section(self):
-        return self.section('cell_type')
-
     def placement_delta(self):
-        placement_delta_index = int(self.placement_delta_section(), 2)
-        return self.LEGAL_DELTAS[placement_delta_index]
+        return self.LEGAL_DELTAS[self.int_value('placement_delta')]
+
+    def movement_delta(self):
+        return self.LEGAL_DELTAS[self.int_value('movement_delta')]
+
+    def int_value(self, section_name):
+        return int(self.section(section_name), 2)
 
     def fill_color(self):
         return self.FILL_COLORS_BY_CELL_TYPE[self.cell_type()]
@@ -66,7 +65,7 @@ class CellGene(Gene):
         return self.BORDER_COLORS_BY_CELL_TYPE[self.cell_type()]
 
     def cell_type(self):
-        if self.cell_type_section() == "11":
+        if self.section('cell_type') == "11":
             return "pulser"
         else:
             return "default"
