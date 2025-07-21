@@ -15,6 +15,7 @@ ORGANISM_CELL_RADIUS = 1
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
 ORGANISM_COUNT = 3
+ORGANISM_CELL_COUNT = 4
 
 def main():
     pygame.init()
@@ -25,17 +26,20 @@ def main():
     world = Box2D.b2World(gravity=(0, 0))
 
     organisms = []
+    remaining_organisms = ORGANISM_COUNT
 
-    for i in range(ORGANISM_COUNT):
+    while remaining_organisms > 0:
         cell_genes = []
-        for j in range(random.randint(2, 16)):
+        for j in range(ORGANISM_CELL_COUNT):
             cell_genes.append(CellGene.random())
 
         cellular_body_builder = CellularBodyBuilder(cell_genes)
         cellular_body = cellular_body_builder.cellular_body()
         x, y = screen.center()
         if cellular_body.is_legal():
-            organisms.append(Organism(world, cellular_body, (x - 10 + i * 10, y)))
+            index = ORGANISM_COUNT - remaining_organisms
+            organisms.append(Organism(world, cellular_body, (x - 10 + index * 10, y)))
+            remaining_organisms -= 1
 
     running = True
     while running:
