@@ -1,6 +1,7 @@
 import pygame
 import Box2D
 import math
+import random
 
 from src.cell import Cell
 from src.cell_gene import CellGene
@@ -26,12 +27,9 @@ def main():
     organisms = []
 
     for i in range(ORGANISM_COUNT):
-        cell_genes = [
-            CellGene.random(),
-            CellGene.random(),
-            CellGene.random(),
-            CellGene.random(),
-        ]
+        cell_genes = []
+        for j in range(random.randint(2, 8)):
+            cell_genes.append(CellGene.random())
 
         cellular_body_builder = CellularBodyBuilder(cell_genes)
         cellular_body = cellular_body_builder.cellular_body()

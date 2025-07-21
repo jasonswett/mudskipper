@@ -10,6 +10,7 @@ class CellGene(Gene):
         (0, 1, -1), # 100, straight down
         (-1, 1, 0), # 101, down-left
         (-1, 0, 1), # 110, up-left
+        (0, 0, 0),  # 111, needed for completeness
     ]
 
     FILL_COLORS_BY_CELL_TYPE = {
