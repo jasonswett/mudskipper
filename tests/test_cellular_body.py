@@ -61,14 +61,14 @@ def test_legal_move():
     f = TestCellFactory()
     cell = f.cell(position=(0, 0, 0), movement_delta=(0, 0, 0))
 
-    # mover_cell is to the upper left and moves straight down
-    mover_cell = f.cell(position=(-1, 0, 1), movement_delta=(0, 1, -1))
+    # mover_cell is straight up and moves to the lower left
+    mover_cell = f.cell(position=(0, -1, 1), movement_delta=(-1, 1, 0))
 
-    mover_cell.move()
     cellular_body = CellularBody([cell, mover_cell])
-    assert cellular_body.is_legal()
+    cellular_body.update_clock()
+    assert mover_cell.position == (-1, 0, 1)
 
-def test_illegal_move():
+def test_illegal_move_overlap():
     from tests.test_cell_factory import TestCellFactory
     f = TestCellFactory()
     cell = f.cell(position=(0, 0, 0), movement_delta=(0, 0, 0))
@@ -76,6 +76,18 @@ def test_illegal_move():
     # mover_cell is straight up and moves straight down
     mover_cell = f.cell(position=(0, -1, 1), movement_delta=(0, 1, -1))
 
-    mover_cell.move()
     cellular_body = CellularBody([cell, mover_cell])
-    assert not(cellular_body.is_legal())
+    cellular_body.update_clock()
+    assert mover_cell.position == (0, -1, 1)
+
+def test_illegal_move_gap():
+    from tests.test_cell_factory import TestCellFactory
+    f = TestCellFactory()
+    cell = f.cell(position=(0, 0, 0), movement_delta=(0, 0, 0))
+
+    # mover_cell is straight up and moves straight up
+    mover_cell = f.cell(position=(0, -1, 1), movement_delta=(0, -1, -1))
+
+    cellular_body = CellularBody([cell, mover_cell])
+    cellular_body.update_clock()
+    assert mover_cell.position == (0, -1, 1)

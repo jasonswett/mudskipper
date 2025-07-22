@@ -47,10 +47,12 @@ class Cell:
             neighbor.stimulate()
 
     def move(self):
+        print(f"original position: {self.position}")
         q, r, s = self.position
         dq, dr, ds = self.movement_delta
         self.position = (q + dq, r + dr, s + ds)
         self.q, self.r, self.s = self.position
+        print(f"new position: {self.position}")
 
     def vertices(self):
         vertices = []

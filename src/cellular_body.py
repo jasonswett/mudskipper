@@ -1,6 +1,11 @@
+import copy
+
 class CellularBody:
     def __init__(self, cells):
         self.cells = cells
+        self.set_cell_neighbors()
+
+    def set_cell_neighbors(self):
         for cell in self.cells:
             cell.neighbors = self.neighbors(cell)
 
@@ -8,14 +13,60 @@ class CellularBody:
         for cell in self.cells:
             cell.update_clock()
 
+        # Apply movement with validation
+        for i, cell in enumerate(self.cells):
+            # Create a deep copy of all cells for testing
+            test_cells = copy.deepcopy(self.cells)
+
+            # Move the test cell at position i
+            test_cells[i].move()
+
+            # Create a temporary CellularBody to test if the move is legal
+            test_body = CellularBody(test_cells)
+
+            # If the move is legal, apply it to the original cell
+            if test_body.is_legal():
+                print("legal!")
+                cell.move()
+
     def is_legal(self):
+        return not self.contains_overlaps() and self.is_contiguous() and self.has_valid_coordinates()
+
+    def has_valid_coordinates(self):
+        for cell in self.cells:
+            if cell.q + cell.r + cell.s != 0:
+                return False
+        return True
+
+    def is_contiguous(self):
+        if len(self.cells) == 0:
+            return True
+        if len(self.cells) == 1:
+            return True
+
+        # Use BFS to check if all cells are connected
+        visited = set()
+        queue = [self.cells[0]]
+        visited.add(self.cells[0])
+
+        while queue:
+            current = queue.pop(0)
+            for neighbor in self.neighbors(current):
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append(neighbor)
+
+        # If all cells were visited, the body is contiguous
+        return len(visited) == len(self.cells)
+
+    def contains_overlaps(self):
         for i in range(len(self.cells)):
             for j in range(i + 1, len(self.cells)):
                 if (self.cells[i].q == self.cells[j].q and
                     self.cells[i].r == self.cells[j].r and
                     self.cells[i].s == self.cells[j].s):
-                    return False
-        return True
+                    return True
+        return False
 
     def neighbors(self, cell):
         neighbors = []
