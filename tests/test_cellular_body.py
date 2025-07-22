@@ -55,3 +55,27 @@ def test_neighbors():
     cellular_body = CellularBody(cells)
     assert cell_straight_up in cellular_body.neighbors(cell_origin)
     assert cell_down_right in cellular_body.neighbors(cell_origin)
+
+def test_legal_move():
+    from tests.test_cell_factory import TestCellFactory
+    f = TestCellFactory()
+    cell = f.cell(position=(0, 0, 0), movement_delta=(0, 0, 0))
+
+    # mover_cell is to the upper left and moves straight down
+    mover_cell = f.cell(position=(-1, 0, 1), movement_delta=(0, 1, -1))
+
+    mover_cell.move()
+    cellular_body = CellularBody([cell, mover_cell])
+    assert cellular_body.is_legal()
+
+def test_illegal_move():
+    from tests.test_cell_factory import TestCellFactory
+    f = TestCellFactory()
+    cell = f.cell(position=(0, 0, 0), movement_delta=(0, 0, 0))
+
+    # mover_cell is straight up and moves straight down
+    mover_cell = f.cell(position=(0, -1, 1), movement_delta=(0, 1, -1))
+
+    mover_cell.move()
+    cellular_body = CellularBody([cell, mover_cell])
+    assert not(cellular_body.is_legal())

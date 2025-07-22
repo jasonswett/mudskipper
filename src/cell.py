@@ -46,6 +46,12 @@ class Cell:
         for neighbor in self.neighbors:
             neighbor.stimulate()
 
+    def move(self):
+        q, r, s = self.position
+        dq, dr, ds = self.movement_delta
+        self.position = (q + dq, r + dr, s + ds)
+        self.q, self.r, self.s = self.position
+
     def vertices(self):
         vertices = []
         for i in range(6):
