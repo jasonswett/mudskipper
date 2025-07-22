@@ -62,8 +62,8 @@ class Cell:
         vertices = []
         for i in range(6):
             angle = (math.pi / 3) * i
-            x = self.center_x() + math.cos(angle)
-            y = self.center_y() + math.sin(angle)
+            x = self.center_x() + self.radius * math.cos(angle)
+            y = self.center_y() + self.radius * math.sin(angle)
             vertices.append((x, y))
         return vertices
 

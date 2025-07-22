@@ -1,7 +1,7 @@
 from src.cell_factory import CellFactory
 
 class CellBuilder:
-    DEFAULT_RADIUS = 1
+    DEFAULT_RADIUS = 0.6
 
     def __init__(self, cell_gene, position):
         self.cell_gene = cell_gene
