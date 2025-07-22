@@ -3,11 +3,8 @@ import copy
 class CellularBody:
     def __init__(self, cells):
         self.cells = cells
-        self.set_cell_neighbors()
-
-    def set_cell_neighbors(self):
         for cell in self.cells:
-            cell.neighbors = self.neighbors(cell)
+            cell.cellular_body = self
 
     def update_clock(self):
         for cell in self.cells:
@@ -26,7 +23,6 @@ class CellularBody:
 
             # If the move is legal, apply it to the original cell
             if test_body.is_legal():
-                print("legal!")
                 cell.move()
 
     def is_legal(self):

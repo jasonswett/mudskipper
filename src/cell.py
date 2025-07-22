@@ -18,8 +18,8 @@ class Cell:
         self.ticks_left_before_unstimulated = 0
         self.ticks_left_before_stimulation_propagation = 0
         self.stimulation_count = 0
-        self.neighbors = []
         self.last_stimulation_tick = -self.REFRACTORY_PERIOD
+        self.cellular_body = None
 
     def update_clock(self):
         self.clock_tick_count += 1
@@ -43,16 +43,19 @@ class Cell:
         self.last_stimulation_tick = self.clock_tick_count
 
     def stimulate_neighbors(self):
-        for neighbor in self.neighbors:
+        for neighbor in self.neighbors():
             neighbor.stimulate()
 
+    def neighbors(self):
+        if self.cellular_body is None:
+            return []
+        return self.cellular_body.neighbors(self)
+
     def move(self):
-        print(f"original position: {self.position}")
         q, r, s = self.position
         dq, dr, ds = self.movement_delta
         self.position = (q + dq, r + dr, s + ds)
         self.q, self.r, self.s = self.position
-        print(f"new position: {self.position}")
 
     def vertices(self):
         vertices = []

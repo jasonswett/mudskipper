@@ -12,7 +12,7 @@ def test_neighbors_on_initialization():
     cell = Cell((0, 0, 0), 1, (0, 0, 0), (0, 0, 0), (0, 0, 0))
     neighbor_cell = Cell((0, 1, -1), 1, (0, 0, 0), (0, 0, 0), (0, 0, 0))
     cellular_body = CellularBody([cell, neighbor_cell])
-    assert neighbor_cell in cell.neighbors
+    assert neighbor_cell in cell.neighbors()
 
 def test_is_legal_true():
     white = (255, 255, 255)
