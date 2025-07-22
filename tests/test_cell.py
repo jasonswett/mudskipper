@@ -6,24 +6,24 @@ from src.screen import Screen
 
 def test_cell_initialization():
     green = (0, 255, 0)
-    cell = Cell((1, -1, 0), 10, green, (0, 0, 0), (0, 1, -1))
+    cell = Cell((1, -1, 0), 10, green, (0, 0, 0), [(0, 1, -1), (0, 0, 0)])
 
     assert cell.q == 1
     assert cell.r == -1
     assert cell.s == 0
     assert cell.radius == 10
     assert cell.border_color == (0, 255, 0)
-    assert cell.movement_delta == (0, 1, -1)
+    assert cell.movement_deltas[0] == (0, 1, -1)
 
 def test_cell_coordinate_relationships():
     radius = 2
-    cell1 = CellFactory.create("default", (0, 0, 0), radius, (0, 255, 0), (0, 0, 0), (0, 0, 0))
-    cell2 = CellFactory.create("default", (1, 0, -1), radius, (0, 255, 0), (0, 0, 0), (0, 0, 0))
+    cell1 = CellFactory.create("default", (0, 0, 0), radius, (0, 255, 0), (0, 0, 0), [(0, 0, 0), (0, 0, 0)])
+    cell2 = CellFactory.create("default", (1, 0, -1), radius, (0, 255, 0), (0, 0, 0), [(0, 0, 0), (0, 0, 0)])
     assert cell2.center_x() - cell1.center_x() == 3
     assert (cell2.center_y() - cell1.center_y()) - 1.732 < 0.001
 
     # cell3 is straight above cell2
-    cell3 = CellFactory.create("default", (1, 1, -2), radius, (0, 255, 0), (0, 0, 0), (0, 0, 0))
+    cell3 = CellFactory.create("default", (1, 1, -2), radius, (0, 255, 0), (0, 0, 0), [(0, 0, 0), (0, 0, 0)])
     assert cell3.center_x() - cell2.center_x() == 0
     assert (cell3.center_x() - cell1.center_x()) - 3.464 < 0.001
 
@@ -32,7 +32,7 @@ def test_stimulation_color():
 
     green = (0, 255, 0)
     original_fill_color = (0, 0, 0)
-    cell = Cell((1, -1, 0), 1, green, original_fill_color, (0, 0, 0))
+    cell = Cell((1, -1, 0), 1, green, original_fill_color, [(0, 0, 0), (0, 0, 0)])
     CellularBody([cell])
 
     cell.stimulate()
@@ -46,7 +46,7 @@ def test_stimulation_color():
 def test_stimulation_duration():
     green = (0, 255, 0)
     original_fill_color = (0, 0, 0)
-    cell = Cell((1, -1, 0), 1, green, original_fill_color, (0, 0, 0))
+    cell = Cell((1, -1, 0), 1, green, original_fill_color, [(0, 0, 0), (0, 0, 0)])
 
     cell.stimulate()
     cell.update_clock()
@@ -57,8 +57,8 @@ def test_stimulation_duration():
 
 def test_stimulate_neighbor():
     from src.cellular_body import CellularBody
-    cell = Cell((0, 0, 0), 1, (0, 0, 0), (0, 0, 0), (0, 0, 0))
-    neighbor_cell = Cell((0, 1, -1), 1, (0, 0, 0), (0, 0, 0), (0, 0, 0))
+    cell = Cell((0, 0, 0), 1, (0, 0, 0), (0, 0, 0), [(0, 0, 0), (0, 0, 0)])
+    neighbor_cell = Cell((0, 1, -1), 1, (0, 0, 0), (0, 0, 0), [(0, 0, 0), (0, 0, 0)])
 
     cellular_body = CellularBody([cell, neighbor_cell])
     cell.stimulate()
@@ -74,8 +74,8 @@ def test_stimulate_neighbor():
 
 def test_refractory_period():
     from src.cellular_body import CellularBody
-    cell = Cell((0, 0, 0), 1, (0, 0, 0), (0, 0, 0), (0, 0, 0))
-    neighbor_cell = Cell((0, 1, -1), 1, (0, 0, 0), (0, 0, 0), (0, 0, 0))
+    cell = Cell((0, 0, 0), 1, (0, 0, 0), (0, 0, 0), [(0, 0, 0), (0, 0, 0)])
+    neighbor_cell = Cell((0, 1, -1), 1, (0, 0, 0), (0, 0, 0), [(0, 0, 0), (0, 0, 0)])
 
     cellular_body = CellularBody([cell, neighbor_cell])
     cell.stimulate()

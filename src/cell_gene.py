@@ -4,7 +4,8 @@ import random
 class CellGene(Gene):
     GENE_SECTION_LENGTHS = {
         'placement_delta': 3,
-        'movement_delta': 3,
+        'movement_delta_1': 3,
+        'movement_delta_2': 3,
         'cell_type': 2,
     }
 
@@ -52,8 +53,11 @@ class CellGene(Gene):
     def placement_delta(self):
         return self.LEGAL_DELTAS[self.int_value('placement_delta')]
 
-    def movement_delta(self):
-        return self.LEGAL_DELTAS[self.int_value('movement_delta')]
+    def movement_deltas(self):
+        return [
+            self.LEGAL_DELTAS[self.int_value('movement_delta_1')],
+            self.LEGAL_DELTAS[self.int_value('movement_delta_2')]
+        ]
 
     def int_value(self, section_name):
         return int(self.section(section_name), 2)

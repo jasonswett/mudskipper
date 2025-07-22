@@ -16,14 +16,14 @@ def test_cell_gene_initialization():
 
 def test_movement_delta():
     f = CellGeneFactory()
-    assert f.cell(movement_delta_gene="000").movement_delta() == (0, 0, 0)
-    assert f.cell(movement_delta_gene="001").movement_delta() == (0, -1, 1)
-    assert f.cell(movement_delta_gene="010").movement_delta() == (1, -1, 0)
-    assert f.cell(movement_delta_gene="011").movement_delta() == (1, 0, -1)
-    assert f.cell(movement_delta_gene="100").movement_delta() == (0, 1, -1)
-    assert f.cell(movement_delta_gene="101").movement_delta() == (-1, 1, 0)
-    assert f.cell(movement_delta_gene="110").movement_delta() == (-1, 0, 1)
-    assert f.cell(movement_delta_gene="111").movement_delta() == (0, 0, 0)
+    assert f.cell(movement_delta_1_gene="000").movement_deltas()[0] == (0, 0, 0)
+    assert f.cell(movement_delta_1_gene="001").movement_deltas()[0] == (0, -1, 1)
+    assert f.cell(movement_delta_1_gene="010").movement_deltas()[0] == (1, -1, 0)
+    assert f.cell(movement_delta_1_gene="011").movement_deltas()[0] == (1, 0, -1)
+    assert f.cell(movement_delta_1_gene="100").movement_deltas()[0] == (0, 1, -1)
+    assert f.cell(movement_delta_1_gene="101").movement_deltas()[0] == (-1, 1, 0)
+    assert f.cell(movement_delta_1_gene="110").movement_deltas()[0] == (-1, 0, 1)
+    assert f.cell(movement_delta_1_gene="111").movement_deltas()[0] == (0, 0, 0)
 
 def test_cell_type():
     f = CellGeneFactory()

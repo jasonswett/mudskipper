@@ -7,14 +7,14 @@ class Cell:
     STIMULATION_PROPAGATION_DELAY = 1
     REFRACTORY_PERIOD = 20
 
-    def __init__(self, position, radius, border_color, fill_color, movement_delta):
+    def __init__(self, position, radius, border_color, fill_color, movement_deltas):
         self.position = position
         self.q, self.r, self.s = position
         self.radius = radius
         self.border_color = border_color
         self.fill_color = fill_color
         self.original_fill_color = fill_color
-        self.movement_delta = movement_delta
+        self.movement_deltas = movement_deltas
         self.clock_tick_count = 0
         self.ticks_left_before_unstimulated = 0
         self.ticks_left_before_stimulation_propagation = 0
@@ -52,9 +52,9 @@ class Cell:
     def neighbors(self):
         return self.cellular_body.neighbors(self)
 
-    def move(self):
+    def move(self, delta):
         q, r, s = self.position
-        dq, dr, ds = self.movement_delta
+        dq, dr, ds = delta
         self.position = (q + dq, r + dr, s + ds)
         self.q, self.r, self.s = self.position
 

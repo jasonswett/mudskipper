@@ -3,8 +3,8 @@ from src.cell import Cell
 class PulserCell(Cell):
     PULSE_INTERVAL = 40
 
-    def __init__(self, position, radius, border_color, fill_color, movement_delta):
-        super().__init__(position, radius, border_color, fill_color, movement_delta)
+    def __init__(self, position, radius, border_color, fill_color, movement_deltas):
+        super().__init__(position, radius, border_color, fill_color, movement_deltas)
         self.original_fill_color = fill_color
 
     def update_clock(self):

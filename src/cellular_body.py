@@ -7,18 +7,20 @@ class CellularBody:
             cell.cellular_body = self
 
     def respond_to_cell_stimulation(self, cell):
-        test_cells = copy.deepcopy(self.cells)
-
         if not(cell in self.cells):
             return
+
         i = self.cells.index(cell)
-        test_cells[i].move()
 
-        test_body = CellularBody(test_cells)
+        # Try each movement delta in order
+        for delta in cell.movement_deltas:
+            test_cells = copy.deepcopy(self.cells)
+            test_cells[i].move(delta)
+            test_body = CellularBody(test_cells)
 
-        if test_body.is_legal():
-            cell.move()
-            return
+            if test_body.is_legal():
+                cell.move(delta)
+                return
 
     def update_clock(self):
         for cell in self.cells:

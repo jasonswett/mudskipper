@@ -14,5 +14,5 @@ class CellBuilder:
             self.DEFAULT_RADIUS,
             self.cell_gene.border_color(),
             self.cell_gene.fill_color(),
-            self.cell_gene.movement_delta()
+            self.cell_gene.movement_deltas()
         )
