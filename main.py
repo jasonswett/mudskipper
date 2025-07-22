@@ -13,7 +13,7 @@ from src.screen import Screen
 
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
-ORGANISM_COUNT = 3
+ORGANISM_COUNT = 40
 
 def draw_organisms(world, screen, display):
     organisms = []
@@ -25,16 +25,17 @@ def draw_organisms(world, screen, display):
         cellular_body = cellular_body_builder.cellular_body()
         if cellular_body.is_legal():
             print(genome.value())
-            index = ORGANISM_COUNT - remaining_organisms
-            x, y = screen.center()
-            organisms.append(Organism(world, cellular_body, (x - 10 + index * 10, y)))
+            # Generate random position within screen bounds
+            x = random.uniform(5, screen.width - 5)  # Leave margin from edges
+            y = random.uniform(5, screen.height - 5)  # Leave margin from edges
+            organisms.append(Organism(world, cellular_body, (x, y)))
             remaining_organisms -= 1
 
     return organisms
 
 def main():
     pygame.init()
-    screen = Screen(40, 30) # unit: meters
+    screen = Screen(60, 35) # unit: meters
     display = pygame.display.set_mode(screen.size_in_pixels())
     pygame.display.set_caption("Mudskipper")
     clock = pygame.time.Clock()
