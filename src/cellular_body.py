@@ -6,24 +6,23 @@ class CellularBody:
         for cell in self.cells:
             cell.cellular_body = self
 
+    def respond_to_cell_stimulation(self, cell):
+        test_cells = copy.deepcopy(self.cells)
+
+        if not(cell in self.cells):
+            return
+        i = self.cells.index(cell)
+        test_cells[i].move()
+
+        test_body = CellularBody(test_cells)
+
+        if test_body.is_legal():
+            cell.move()
+            return
+
     def update_clock(self):
         for cell in self.cells:
             cell.update_clock()
-
-        # Apply movement with validation
-        for i, cell in enumerate(self.cells):
-            # Create a deep copy of all cells for testing
-            test_cells = copy.deepcopy(self.cells)
-
-            # Move the test cell at position i
-            test_cells[i].move()
-
-            # Create a temporary CellularBody to test if the move is legal
-            test_body = CellularBody(test_cells)
-
-            # If the move is legal, apply it to the original cell
-            if test_body.is_legal():
-                cell.move()
 
     def is_legal(self):
         return not self.contains_overlaps() and self.is_contiguous() and self.has_valid_coordinates()

@@ -65,7 +65,7 @@ def test_legal_move():
     mover_cell = f.cell(position=(0, -1, 1), movement_delta=(-1, 1, 0))
 
     cellular_body = CellularBody([cell, mover_cell])
-    cellular_body.update_clock()
+    cellular_body.respond_to_cell_stimulation(mover_cell)
     assert mover_cell.position == (-1, 0, 1)
 
 def test_illegal_move_overlap():
@@ -77,7 +77,7 @@ def test_illegal_move_overlap():
     mover_cell = f.cell(position=(0, -1, 1), movement_delta=(0, 1, -1))
 
     cellular_body = CellularBody([cell, mover_cell])
-    cellular_body.update_clock()
+    cellular_body.respond_to_cell_stimulation(mover_cell)
     assert mover_cell.position == (0, -1, 1)
 
 def test_illegal_move_gap():
@@ -89,5 +89,5 @@ def test_illegal_move_gap():
     mover_cell = f.cell(position=(0, -1, 1), movement_delta=(0, -1, -1))
 
     cellular_body = CellularBody([cell, mover_cell])
-    cellular_body.update_clock()
+    cellular_body.respond_to_cell_stimulation(mover_cell)
     assert mover_cell.position == (0, -1, 1)

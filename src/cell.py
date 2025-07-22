@@ -1,4 +1,5 @@
 import math
+from src.cellular_body import CellularBody
 
 class Cell:
     STIMULATION_COLOR = (255, 255, 0)
@@ -19,7 +20,7 @@ class Cell:
         self.ticks_left_before_stimulation_propagation = 0
         self.stimulation_count = 0
         self.last_stimulation_tick = -self.REFRACTORY_PERIOD
-        self.cellular_body = None
+        self.cellular_body = CellularBody([])
 
     def update_clock(self):
         self.clock_tick_count += 1
@@ -36,6 +37,8 @@ class Cell:
                 self.stimulate_neighbors()
 
     def stimulate(self):
+        self.cellular_body.respond_to_cell_stimulation(self)
+
         if self.clock_tick_count - self.last_stimulation_tick < self.REFRACTORY_PERIOD:
             return
         self.stimulation_count += 1
@@ -47,8 +50,6 @@ class Cell:
             neighbor.stimulate()
 
     def neighbors(self):
-        if self.cellular_body is None:
-            return []
         return self.cellular_body.neighbors(self)
 
     def move(self):

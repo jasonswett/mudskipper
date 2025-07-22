@@ -20,7 +20,7 @@ def draw_organisms(world, screen, display):
     remaining_organisms = ORGANISM_COUNT
 
     while remaining_organisms > 0:
-        genome = Genome(random.randint(2, 6))
+        genome = Genome(2)
         cellular_body_builder = CellularBodyBuilder(genome.cell_genes())
         cellular_body = cellular_body_builder.cellular_body()
         if cellular_body.is_legal():
