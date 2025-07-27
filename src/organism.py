@@ -3,7 +3,7 @@ import Box2D
 class Organism:
     def __init__(self, world, cellular_body, position):
         body_def = Box2D.b2BodyDef()
-        body_def.type = Box2D.b2_staticBody
+        body_def.type = Box2D.b2_dynamicBody
         body_def.position = position
         self.body = world.CreateBody(body_def)
         self.cellular_body = cellular_body
