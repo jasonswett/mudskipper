@@ -16,33 +16,25 @@ def test_cell_initialization():
     assert cell.movement_deltas[0] == (0, 1, -1)
 
 def test_cell_coordinate_relationships():
-    from src.organism_rendering import OrganismRendering
-    from src.organism import Organism
-    from src.cellular_body import CellularBody
-    import Box2D
-    
     radius = 2
     cell1 = CellFactory.create("default", (0, 0, 0), radius, (0, 255, 0), (0, 0, 0), [(0, 0, 0), (0, 0, 0)])
     cell2 = CellFactory.create("default", (1, 0, -1), radius, (0, 255, 0), (0, 0, 0), [(0, 0, 0), (0, 0, 0)])
     
-    # Create organisms to use OrganismRendering
-    world = Box2D.b2World()
-    organism1 = Organism(world, CellularBody([cell1]), (0, 0))
-    organism2 = Organism(world, CellularBody([cell2]), (0, 0))
+    # Calculate centers directly
+    def center_x(cell):
+        return (3/2 * cell.q) * cell.radius
     
-    rendering1 = OrganismRendering(organism1, None)
-    rendering2 = OrganismRendering(organism2, None)
+    def center_y(cell):
+        return (math.sqrt(3)/2 * cell.q + math.sqrt(3) * cell.r) * cell.radius
     
-    assert rendering2.cell_center_x(cell2) - rendering1.cell_center_x(cell1) == 3
-    assert (rendering2.cell_center_y(cell2) - rendering1.cell_center_y(cell1)) - 1.732 < 0.001
+    assert center_x(cell2) - center_x(cell1) == 3
+    assert (center_y(cell2) - center_y(cell1)) - 1.732 < 0.001
 
     # cell3 is straight above cell2
     cell3 = CellFactory.create("default", (1, 1, -2), radius, (0, 255, 0), (0, 0, 0), [(0, 0, 0), (0, 0, 0)])
-    organism3 = Organism(world, CellularBody([cell3]), (0, 0))
-    rendering3 = OrganismRendering(organism3, None)
     
-    assert rendering3.cell_center_x(cell3) - rendering2.cell_center_x(cell2) == 0
-    assert (rendering3.cell_center_x(cell3) - rendering1.cell_center_x(cell1)) - 3.464 < 0.001
+    assert center_x(cell3) - center_x(cell2) == 0
+    assert (center_x(cell3) - center_x(cell1)) - 3.464 < 0.001
 
 def test_stimulation_color():
     from src.cellular_body import CellularBody

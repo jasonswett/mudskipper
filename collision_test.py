@@ -120,8 +120,11 @@ def main():
         # Display cell positions
         y_offset = 35
         for i, cell in enumerate(organism.cells()):
-            cell_world_x = organism.body.position.x + ((3/2 * cell.q) * cell.radius)
-            cell_world_y = organism.body.position.y + ((math.sqrt(3)/2 * cell.q + math.sqrt(3) * cell.r) * cell.radius)
+            # Calculate cell center position
+            cell_center_x = (3/2 * cell.q) * cell.radius
+            cell_center_y = (math.sqrt(3)/2 * cell.q + math.sqrt(3) * cell.r) * cell.radius
+            cell_world_x = organism.body.position.x + cell_center_x
+            cell_world_y = organism.body.position.y + cell_center_y
             cell_text = f"Cell {i}: ({cell_world_x:.2f}, {cell_world_y:.2f})"
             cell_surface = font.render(cell_text, True, WHITE)
             display.blit(cell_surface, (10, y_offset))
