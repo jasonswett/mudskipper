@@ -1,4 +1,3 @@
-import math
 from src.cellular_body import CellularBody
 
 class Cell:
@@ -57,18 +56,3 @@ class Cell:
         dq, dr, ds = delta
         self.position = (q + dq, r + dr, s + ds)
         self.q, self.r, self.s = self.position
-
-    def vertices(self):
-        vertices = []
-        for i in range(6):
-            angle = (math.pi / 3) * i
-            x = self.center_x() + self.radius * math.cos(angle)
-            y = self.center_y() + self.radius * math.sin(angle)
-            vertices.append((x, y))
-        return vertices
-
-    def center_x(self):
-        return (3/2 * self.q) * self.radius
-
-    def center_y(self):
-        return (math.sqrt(3)/2 * self.q + math.sqrt(3) * self.r) * self.radius
