@@ -26,3 +26,22 @@ class Organism:
 
     def update_clock(self):
         self.cellular_body.update_clock()
+        self.update_fixtures()
+    
+    def update_fixtures(self):
+        """Recreate all fixtures based on current cell positions."""
+        # Remove all existing fixtures
+        for fixture in self.body.fixtures:
+            self.body.DestroyFixture(fixture)
+        
+        # Create new fixtures based on current cell positions
+        for cell in self.cells():
+            vertices = []
+            for i in range(6):
+                angle = (math.pi / 3) * i
+                x = ((3/2 * cell.q) * cell.radius) + cell.radius * math.cos(angle)
+                y = ((math.sqrt(3)/2 * cell.q + math.sqrt(3) * cell.r) * cell.radius) + cell.radius * math.sin(angle)
+                vertices.append((x, y))
+            
+            hexagon_shape = Box2D.b2PolygonShape(vertices=vertices)
+            self.body.CreateFixture(shape=hexagon_shape, density=1.0)
