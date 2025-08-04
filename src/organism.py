@@ -10,14 +10,7 @@ class Organism:
         self.cellular_body = cellular_body
 
         for cell in self.cells():
-            # Calculate vertices locally - same as OrganismRendering.vertices()
-            vertices = []
-            for i in range(6):
-                angle = (math.pi / 3) * i
-                x = ((3/2 * cell.q) * cell.radius) + cell.radius * math.cos(angle)
-                y = ((math.sqrt(3)/2 * cell.q + math.sqrt(3) * cell.r) * cell.radius) + cell.radius * math.sin(angle)
-                vertices.append((x, y))
-            
+            vertices = self.box2d_cell_vertices(cell)
             hexagon_shape = Box2D.b2PolygonShape(vertices=vertices)
             self.body.CreateFixture(shape=hexagon_shape, density=1.0)
 
@@ -36,12 +29,16 @@ class Organism:
         
         # Create new fixtures based on current cell positions
         for cell in self.cells():
-            vertices = []
-            for i in range(6):
-                angle = (math.pi / 3) * i
-                x = ((3/2 * cell.q) * cell.radius) + cell.radius * math.cos(angle)
-                y = ((math.sqrt(3)/2 * cell.q + math.sqrt(3) * cell.r) * cell.radius) + cell.radius * math.sin(angle)
-                vertices.append((x, y))
-            
+            vertices = self.box2d_cell_vertices(cell)
             hexagon_shape = Box2D.b2PolygonShape(vertices=vertices)
             self.body.CreateFixture(shape=hexagon_shape, density=1.0)
+    
+    def box2d_cell_vertices(self, cell):
+        """Calculate vertices for a cell's hexagon in Box2D local coordinates."""
+        vertices = []
+        for i in range(6):
+            angle = (math.pi / 3) * i
+            x = ((3/2 * cell.q) * cell.radius) + cell.radius * math.cos(angle)
+            y = ((math.sqrt(3)/2 * cell.q + math.sqrt(3) * cell.r) * cell.radius) + cell.radius * math.sin(angle)
+            vertices.append((x, y))
+        return vertices
