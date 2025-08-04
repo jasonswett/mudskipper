@@ -13,7 +13,7 @@ from src.screen import Screen
 
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
-ORGANISM_COUNT = 40
+ORGANISM_COUNT = 20
 
 def draw_organisms(world, screen, display):
     organisms = []
@@ -39,6 +39,7 @@ def main():
     display = pygame.display.set_mode(screen.size_in_pixels())
     pygame.display.set_caption("Mudskipper")
     clock = pygame.time.Clock()
+    font = pygame.font.Font(None, 36)
     world = Box2D.b2World(gravity=(0, 0))
     organisms = draw_organisms(world, screen, display)
 
@@ -61,6 +62,10 @@ def main():
             for cell_rendering in organism_rendering.cell_renderings():
                 pygame.draw.polygon(display, cell_rendering['fill_color'], cell_rendering['vertices'])
                 pygame.draw.polygon(display, cell_rendering['border_color'], cell_rendering['vertices'], width=2)
+
+        count_text = f"Organisms: {len(organisms)}"
+        count_surface = font.render(count_text, True, GREEN)
+        display.blit(count_surface, (10, 10))
 
         pygame.display.flip()
         clock.tick(60)
