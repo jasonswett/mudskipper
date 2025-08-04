@@ -4,7 +4,9 @@ class Cell:
     STIMULATION_COLOR = (255, 255, 0)
     STIMULATION_DURATION = 8
     STIMULATION_PROPAGATION_DELAY = 1
+    DEATH_COLOR = (128, 128, 128)
     REFRACTORY_PERIOD = 20
+    STARTING_HEALTH = 500
 
     def __init__(self, position, radius, border_color, fill_color, movement_deltas):
         self.position = position
@@ -20,9 +22,18 @@ class Cell:
         self.stimulation_count = 0
         self.last_stimulation_tick = -self.REFRACTORY_PERIOD
         self.cellular_body = CellularBody([])
+        self.health = self.STARTING_HEALTH
 
     def update_clock(self):
+        if self.health <= 0:
+            return
+
         self.clock_tick_count += 1
+
+        self.health -= 1
+        if self.health <= 0:
+            self.die()
+
         if self.ticks_left_before_unstimulated > 0:
             self.fill_color = self.STIMULATION_COLOR
             self.ticks_left_before_unstimulated -= 1
@@ -36,6 +47,9 @@ class Cell:
                 self.stimulate_neighbors()
 
     def stimulate(self):
+        if not(self.is_alive()):
+            return
+
         self.cellular_body.respond_to_cell_stimulation(self)
 
         if self.clock_tick_count - self.last_stimulation_tick < self.REFRACTORY_PERIOD:
@@ -56,3 +70,10 @@ class Cell:
         dq, dr, ds = delta
         self.position = (q + dq, r + dr, s + ds)
         self.q, self.r, self.s = self.position
+
+    def die(self):
+        self.fill_color = self.DEATH_COLOR
+        self.border_color = self.DEATH_COLOR
+
+    def is_alive(self):
+        return self.health > 0
