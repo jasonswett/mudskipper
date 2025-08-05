@@ -42,3 +42,7 @@ class Organism:
             y = ((math.sqrt(3)/2 * cell.q + math.sqrt(3) * cell.r) * cell.radius) + cell.radius * math.sin(angle)
             vertices.append((x, y))
         return vertices
+
+    def nourish(self):
+        for cell in self.cells():
+            cell.nourish()

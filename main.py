@@ -11,6 +11,7 @@ from src.organism import Organism
 from src.organism_rendering import OrganismRendering
 from src.screen import Screen
 from src.food_morsel import FoodMorsel
+from src.contact_listener import ContactListener
 
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
@@ -44,6 +45,7 @@ def create_food_morsels(world, screen, count=200):
         food_morsels.append(food_morsel)
     return food_morsels
 
+
 def main():
     pygame.init()
     screen = Screen(60, 35) # unit: meters
@@ -54,6 +56,7 @@ def main():
     world = Box2D.b2World(gravity=(0, 0))
     organisms = draw_organisms(world, screen, display)
     food_morsels = create_food_morsels(world, screen)
+    world.contactListener = ContactListener(organisms, food_morsels)
 
     running = True
     while running:
@@ -65,6 +68,7 @@ def main():
                     organisms.clear()
                     organisms = draw_organisms(world, screen, display)
                     food_morsels = create_food_morsels(world, screen)
+                    world.contactListener = ContactListener(organisms, food_morsels)
 
         display.fill(BLACK)
 
@@ -76,13 +80,21 @@ def main():
                 pygame.draw.polygon(display, cell_rendering['fill_color'], cell_rendering['vertices'])
                 pygame.draw.polygon(display, cell_rendering['border_color'], cell_rendering['vertices'], width=2)
 
-        # Draw food morsels
+        # Remove eaten food and draw remaining food
+        food_morsels_to_remove = []
         for food_morsel in food_morsels:
-            pos = food_morsel.body.position
-            x = Screen.to_pixels(pos.x)
-            y = Screen.to_pixels(pos.y)
-            radius = Screen.to_pixels(food_morsel.radius)
-            pygame.draw.circle(display, GREEN, (int(x), int(y)), int(radius))
+            if food_morsel.eaten:
+                world.DestroyBody(food_morsel.body)
+                food_morsels_to_remove.append(food_morsel)
+            else:
+                pos = food_morsel.body.position
+                x = Screen.to_pixels(pos.x)
+                y = Screen.to_pixels(pos.y)
+                radius = Screen.to_pixels(food_morsel.radius)
+                pygame.draw.circle(display, GREEN, (int(x), int(y)), int(radius))
+
+        for food_morsel in food_morsels_to_remove:
+            food_morsels.remove(food_morsel)
 
         organism_text = f"Organisms: {len(organisms)}"
         organism_surface = font.render(organism_text, False, WHITE)
