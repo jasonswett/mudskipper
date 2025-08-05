@@ -16,7 +16,7 @@ from src.contact_listener import ContactListener
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
 WHITE = (255, 255, 255)
-ORGANISM_COUNT = 20
+ORGANISM_COUNT = 50
 
 def draw_organisms(world, screen, display):
     organisms = []
@@ -45,6 +45,33 @@ def create_food_morsels(world, screen, count=200):
         food_morsels.append(food_morsel)
     return food_morsels
 
+def create_walls(world, screen):
+    thickness = 1.0
+
+    # Bottom wall
+    world.CreateStaticBody(
+        position=(screen.width/2, thickness/2),
+        shapes=Box2D.b2PolygonShape(box=(screen.width/2, thickness/2))
+    )
+
+    # Top wall
+    world.CreateStaticBody(
+        position=(screen.width/2, screen.height - thickness/2),
+        shapes=Box2D.b2PolygonShape(box=(screen.width/2, thickness/2))
+    )
+
+    # Left wall
+    world.CreateStaticBody(
+        position=(thickness/2, screen.height/2),
+        shapes=Box2D.b2PolygonShape(box=(thickness/2, screen.height/2))
+    )
+
+    # Right wall
+    world.CreateStaticBody(
+        position=(screen.width - thickness/2, screen.height/2),
+        shapes=Box2D.b2PolygonShape(box=(thickness/2, screen.height/2))
+    )
+
 
 def main():
     pygame.init()
@@ -54,6 +81,7 @@ def main():
     clock = pygame.time.Clock()
     font = pygame.font.Font(None, 24)
     world = Box2D.b2World(gravity=(0, 0))
+    create_walls(world, screen)
     organisms = draw_organisms(world, screen, display)
     food_morsels = create_food_morsels(world, screen)
     world.contactListener = ContactListener(organisms, food_morsels)
@@ -107,17 +135,17 @@ def main():
         organism_text = f"Organisms: {len(organisms)}"
         organism_surface = font.render(organism_text, False, WHITE)
         display.blit(organism_surface, (10, 10))
-        
+
         food_text = f"Food: {len(food_morsels)}"
         food_surface = font.render(food_text, False, WHITE)
         display.blit(food_surface, (10, 30))
 
         pygame.display.flip()
         clock.tick(60)
-        
+
         # Step the physics simulation
         world.Step(1.0/60, 6, 2)
-    
+
     pygame.quit()
 
 if __name__ == "__main__":
