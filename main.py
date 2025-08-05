@@ -18,7 +18,7 @@ GREEN = (0, 255, 0)
 WHITE = (255, 255, 255)
 ORGANISM_COUNT = 50
 
-def draw_organisms(world, screen, display):
+def draw_organisms(world, world_width, world_height, display):
     organisms = []
     remaining_organisms = ORGANISM_COUNT
 
@@ -28,62 +28,66 @@ def draw_organisms(world, screen, display):
         cellular_body = cellular_body_builder.cellular_body()
         if cellular_body.is_legal():
             print(genome.value())
-            # Generate random position within screen bounds
-            x = random.uniform(5, screen.width - 5)  # Leave margin from edges
-            y = random.uniform(5, screen.height - 5)  # Leave margin from edges
+            # Generate random position within world bounds
+            x = random.uniform(5, world_width - 5)  # Leave margin from edges
+            y = random.uniform(5, world_height - 5)  # Leave margin from edges
             organisms.append(Organism(world, cellular_body, (x, y)))
             remaining_organisms -= 1
 
     return organisms
 
-def create_food_morsels(world, screen, count=200):
+def create_food_morsels(world, world_width, world_height, count=200):
     food_morsels = []
     for _ in range(count):
-        x = random.uniform(2, screen.width - 2)
-        y = random.uniform(2, screen.height - 2)
+        x = random.uniform(2, world_width - 2)
+        y = random.uniform(2, world_height - 2)
         food_morsel = FoodMorsel(world, (x, y))
         food_morsels.append(food_morsel)
     return food_morsels
 
-def create_walls(world, screen):
+def create_walls(world, world_width, world_height):
     thickness = 1.0
 
     # Bottom wall
     world.CreateStaticBody(
-        position=(screen.width/2, thickness/2),
-        shapes=Box2D.b2PolygonShape(box=(screen.width/2, thickness/2))
+        position=(world_width/2, thickness/2),
+        shapes=Box2D.b2PolygonShape(box=(world_width/2, thickness/2))
     )
 
     # Top wall
     world.CreateStaticBody(
-        position=(screen.width/2, screen.height - thickness/2),
-        shapes=Box2D.b2PolygonShape(box=(screen.width/2, thickness/2))
+        position=(world_width/2, world_height - thickness/2),
+        shapes=Box2D.b2PolygonShape(box=(world_width/2, thickness/2))
     )
 
     # Left wall
     world.CreateStaticBody(
-        position=(thickness/2, screen.height/2),
-        shapes=Box2D.b2PolygonShape(box=(thickness/2, screen.height/2))
+        position=(thickness/2, world_height/2),
+        shapes=Box2D.b2PolygonShape(box=(thickness/2, world_height/2))
     )
 
     # Right wall
     world.CreateStaticBody(
-        position=(screen.width - thickness/2, screen.height/2),
-        shapes=Box2D.b2PolygonShape(box=(thickness/2, screen.height/2))
+        position=(world_width - thickness/2, world_height/2),
+        shapes=Box2D.b2PolygonShape(box=(thickness/2, world_height/2))
     )
 
 
 def main():
     pygame.init()
-    screen = Screen(60, 35) # unit: meters
+    # World size (physics simulation area)
+    world_width, world_height = (40, 40) # meters
+
+    # Display size (viewport window)
+    screen = Screen(30, 30) # unit: meters (viewport size)
     display = pygame.display.set_mode(screen.size_in_pixels())
     pygame.display.set_caption("Mudskipper")
     clock = pygame.time.Clock()
     font = pygame.font.Font(None, 24)
     world = Box2D.b2World(gravity=(0, 0))
-    create_walls(world, screen)
-    organisms = draw_organisms(world, screen, display)
-    food_morsels = create_food_morsels(world, screen)
+    create_walls(world, world_width, world_height)
+    organisms = draw_organisms(world, world_width, world_height, display)
+    food_morsels = create_food_morsels(world, world_width, world_height)
     world.contactListener = ContactListener(organisms, food_morsels)
 
     running = True
@@ -94,8 +98,8 @@ def main():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     organisms.clear()
-                    organisms = draw_organisms(world, screen, display)
-                    food_morsels = create_food_morsels(world, screen)
+                    organisms = draw_organisms(world, world_width, world_height, display)
+                    food_morsels = create_food_morsels(world, world_width, world_height)
                     world.contactListener = ContactListener(organisms, food_morsels)
 
         display.fill(BLACK)
