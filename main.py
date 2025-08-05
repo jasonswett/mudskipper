@@ -72,13 +72,21 @@ def main():
 
         display.fill(BLACK)
 
+        # Remove dead organisms and draw living ones
+        organisms_to_remove = []
         for organism in organisms:
             organism.update_clock()
-            organism_rendering = OrganismRendering(organism, screen)
+            if organism.is_alive():
+                organism_rendering = OrganismRendering(organism, screen)
+                for cell_rendering in organism_rendering.cell_renderings():
+                    pygame.draw.polygon(display, cell_rendering['fill_color'], cell_rendering['vertices'])
+                    pygame.draw.polygon(display, cell_rendering['border_color'], cell_rendering['vertices'], width=2)
+            else:
+                world.DestroyBody(organism.body)
+                organisms_to_remove.append(organism)
 
-            for cell_rendering in organism_rendering.cell_renderings():
-                pygame.draw.polygon(display, cell_rendering['fill_color'], cell_rendering['vertices'])
-                pygame.draw.polygon(display, cell_rendering['border_color'], cell_rendering['vertices'], width=2)
+        for organism in organisms_to_remove:
+            organisms.remove(organism)
 
         # Remove eaten food and draw remaining food
         food_morsels_to_remove = []

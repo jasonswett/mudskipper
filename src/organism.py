@@ -46,3 +46,6 @@ class Organism:
     def nourish(self):
         for cell in self.cells():
             cell.nourish()
+
+    def is_alive(self):
+        return any(cell.is_alive() for cell in self.cells())
