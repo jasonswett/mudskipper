@@ -78,10 +78,11 @@ def main():
 
         # Draw food morsels
         for food_morsel in food_morsels:
-            food_pixel_x = Screen.to_pixels(food_morsel.position[0])
-            food_pixel_y = Screen.to_pixels(food_morsel.position[1])
-            food_radius_pixels = Screen.to_pixels(food_morsel.radius)
-            pygame.draw.circle(display, GREEN, (int(food_pixel_x), int(food_pixel_y)), int(food_radius_pixels))
+            pos = food_morsel.body.position
+            x = Screen.to_pixels(pos.x)
+            y = Screen.to_pixels(pos.y)
+            radius = Screen.to_pixels(food_morsel.radius)
+            pygame.draw.circle(display, GREEN, (int(x), int(y)), int(radius))
 
         organism_text = f"Organisms: {len(organisms)}"
         organism_surface = font.render(organism_text, False, WHITE)
