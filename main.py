@@ -86,7 +86,6 @@ def main():
     clock = pygame.time.Clock()
     font = pygame.font.Font(None, 24)
     world = Box2D.b2World(gravity=(0, 0))
-    create_walls(world, world_width, world_height)
     organisms = draw_organisms(world, world_width, world_height, display)
     food_morsels = create_food_morsels(world, world_width, world_height)
     world.contactListener = ContactListener(organisms, food_morsels)

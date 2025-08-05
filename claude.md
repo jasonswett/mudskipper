@@ -6,6 +6,8 @@ I use a flat-side-up orientation.
 In general, don't make commits before you check with me.
 Push after every commit.
 
+Don't comment out code. Just delete it.
+
 In general, always do the simplest thing that could possibly work.
 
 When you want to understand how existing code works, look first to the tests.
