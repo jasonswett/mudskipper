@@ -6,7 +6,7 @@ class Cell:
     STIMULATION_PROPAGATION_DELAY = 1
     DEATH_COLOR = (128, 128, 128)
     REFRACTORY_PERIOD = 20
-    STARTING_HEALTH = 500
+    STARTING_HEALTH = 1000
 
     def __init__(self, position, radius, border_color, fill_color, movement_deltas):
         self.position = position
