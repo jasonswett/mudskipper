@@ -77,7 +77,7 @@ def create_walls(world, world_width, world_height):
 def main():
     pygame.init()
     # World size (physics simulation area)
-    world_width, world_height = (40, 30) # meters
+    world_width, world_height = (30, 20) # meters
 
     # Display size (viewport window)
     screen = Screen(40, 30) # unit: meters (viewport size)
