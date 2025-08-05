@@ -30,8 +30,8 @@ def draw_organisms(world, world_width, world_height, display):
         if cellular_body.is_legal():
             print(genome.value())
             # Generate random position within world bounds
-            x = random.uniform(5, world_width - 5)  # Leave margin from edges
-            y = random.uniform(5, world_height - 5)  # Leave margin from edges
+            x = random.uniform(0, world_width)
+            y = random.uniform(0, world_height)
             organisms.append(Organism(world, cellular_body, (x, y)))
             remaining_organisms -= 1
 
@@ -40,8 +40,8 @@ def draw_organisms(world, world_width, world_height, display):
 def create_food_morsels(world, world_width, world_height, count=200):
     food_morsels = []
     for _ in range(count):
-        x = random.uniform(2, world_width - 2)
-        y = random.uniform(2, world_height - 2)
+        x = random.uniform(0, world_width)
+        y = random.uniform(0, world_height)
         food_morsel = FoodMorsel(world, (x, y))
         food_morsels.append(food_morsel)
     return food_morsels
