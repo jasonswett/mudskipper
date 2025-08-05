@@ -5,18 +5,22 @@ class OrganismRendering:
         self.organism = organism
         self.screen = screen
 
-    def cell_renderings(self):
+    def cell_renderings(self, camera):
         cell_renderings = []
         # Get vertices directly from Box2D fixtures
         for i, fixture in enumerate(self.organism.body.fixtures):
             shape = fixture.shape
             vertices = []
 
-            # Transform each vertex from local to world coordinates
+            # Transform each vertex from local to world coordinates, then apply camera
             for vertex in shape.vertices:
                 world_vertex = self.organism.body.transform * vertex
-                pixel_x = Screen.to_pixels(world_vertex.x)
-                pixel_y = Screen.to_pixels(world_vertex.y)
+
+                # Apply camera transformation
+                screen_x, screen_y = camera.world_to_screen(world_vertex.x, world_vertex.y)
+                pixel_x = Screen.to_pixels(screen_x)
+                pixel_y = Screen.to_pixels(screen_y)
+
                 vertices.append((pixel_x, pixel_y))
 
             # Get the corresponding cell for colors
@@ -28,4 +32,3 @@ class OrganismRendering:
                     'fill_color': cell.fill_color
                 })
         return cell_renderings
-

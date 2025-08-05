@@ -12,6 +12,7 @@ from src.organism_rendering import OrganismRendering
 from src.screen import Screen
 from src.food_morsel import FoodMorsel
 from src.contact_listener import ContactListener
+from src.camera import Camera
 
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
@@ -76,10 +77,10 @@ def create_walls(world, world_width, world_height):
 def main():
     pygame.init()
     # World size (physics simulation area)
-    world_width, world_height = (40, 40) # meters
+    world_width, world_height = (80, 60) # meters
 
     # Display size (viewport window)
-    screen = Screen(30, 30) # unit: meters (viewport size)
+    screen = Screen(60, 35) # unit: meters (viewport size)
     display = pygame.display.set_mode(screen.size_in_pixels())
     pygame.display.set_caption("Mudskipper")
     clock = pygame.time.Clock()
@@ -89,6 +90,9 @@ def main():
     organisms = draw_organisms(world, world_width, world_height, display)
     food_morsels = create_food_morsels(world, world_width, world_height)
     world.contactListener = ContactListener(organisms, food_morsels)
+
+    # Create camera
+    camera = Camera(world_width, world_height, screen.width, screen.height)
 
     running = True
     while running:
@@ -102,6 +106,17 @@ def main():
                     food_morsels = create_food_morsels(world, world_width, world_height)
                     world.contactListener = ContactListener(organisms, food_morsels)
 
+        # Continuous camera movement
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT]:
+            camera.move(-0.5, 0)
+        if keys[pygame.K_RIGHT]:
+            camera.move(0.5, 0)
+        if keys[pygame.K_UP]:
+            camera.move(0, -0.5)
+        if keys[pygame.K_DOWN]:
+            camera.move(0, 0.5)
+
         display.fill(BLACK)
 
         # Remove dead organisms and draw living ones
@@ -110,7 +125,7 @@ def main():
             organism.update_clock()
             if organism.is_alive():
                 organism_rendering = OrganismRendering(organism, screen)
-                for cell_rendering in organism_rendering.cell_renderings():
+                for cell_rendering in organism_rendering.cell_renderings(camera):
                     pygame.draw.polygon(display, cell_rendering['fill_color'], cell_rendering['vertices'])
                     pygame.draw.polygon(display, cell_rendering['border_color'], cell_rendering['vertices'], width=2)
             else:
@@ -128,8 +143,9 @@ def main():
                 food_morsels_to_remove.append(food_morsel)
             else:
                 pos = food_morsel.body.position
-                x = Screen.to_pixels(pos.x)
-                y = Screen.to_pixels(pos.y)
+                screen_x, screen_y = camera.world_to_screen(pos.x, pos.y)
+                x = Screen.to_pixels(screen_x)
+                y = Screen.to_pixels(screen_y)
                 radius = Screen.to_pixels(food_morsel.radius)
                 pygame.draw.circle(display, GREEN, (int(x), int(y)), int(radius))
 
