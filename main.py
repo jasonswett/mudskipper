@@ -14,6 +14,7 @@ from src.food_morsel import FoodMorsel
 
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
+WHITE = (255, 255, 255)
 ORGANISM_COUNT = 20
 
 def draw_organisms(world, screen, display):
@@ -49,7 +50,7 @@ def main():
     display = pygame.display.set_mode(screen.size_in_pixels())
     pygame.display.set_caption("Mudskipper")
     clock = pygame.time.Clock()
-    font = pygame.font.Font(None, 36)
+    font = pygame.font.Font(None, 24)
     world = Box2D.b2World(gravity=(0, 0))
     organisms = draw_organisms(world, screen, display)
     food_morsels = create_food_morsels(world, screen)
@@ -82,9 +83,13 @@ def main():
             food_radius_pixels = Screen.to_pixels(food_morsel.radius)
             pygame.draw.circle(display, GREEN, (int(food_pixel_x), int(food_pixel_y)), int(food_radius_pixels))
 
-        count_text = f"Organisms: {len(organisms)}"
-        count_surface = font.render(count_text, True, GREEN)
-        display.blit(count_surface, (10, 10))
+        organism_text = f"Organisms: {len(organisms)}"
+        organism_surface = font.render(organism_text, False, WHITE)
+        display.blit(organism_surface, (10, 10))
+        
+        food_text = f"Food: {len(food_morsels)}"
+        food_surface = font.render(food_text, False, WHITE)
+        display.blit(food_surface, (10, 30))
 
         pygame.display.flip()
         clock.tick(60)
