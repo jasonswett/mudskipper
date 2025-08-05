@@ -17,7 +17,7 @@ from src.camera import Camera
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
 WHITE = (255, 255, 255)
-ORGANISM_COUNT = 50
+ORGANISM_COUNT = 3
 
 def draw_organisms(world, world_width, world_height, display):
     organisms = []
