@@ -77,10 +77,10 @@ def create_walls(world, world_width, world_height):
 def main():
     pygame.init()
     # World size (physics simulation area)
-    world_width, world_height = (80, 60) # meters
+    world_width, world_height = (40, 30) # meters
 
     # Display size (viewport window)
-    screen = Screen(60, 35) # unit: meters (viewport size)
+    screen = Screen(40, 30) # unit: meters (viewport size)
     display = pygame.display.set_mode(screen.size_in_pixels())
     pygame.display.set_caption("Mudskipper")
     clock = pygame.time.Clock()
