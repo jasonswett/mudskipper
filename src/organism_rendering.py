@@ -43,3 +43,15 @@ class OrganismRendering:
 
             all_vertices.append(fixture_vertices)
         return all_vertices
+
+    def bounding_rectangle(self):
+        points = []
+        for vertices in self.vertices():
+            points.extend(vertices)
+
+        min_x = min(vertex[0] for vertex in points)
+        max_x = max(vertex[0] for vertex in points)
+        min_y = min(vertex[1] for vertex in points)
+        max_y = max(vertex[1] for vertex in points)
+
+        return (min_x, min_y, max_x, max_y)

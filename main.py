@@ -21,6 +21,7 @@ BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
 WHITE = (255, 255, 255)
 GRAY = (128, 128, 128)
+YELLOW = (255, 255, 0)
 ORGANISM_COUNT = 3
 
 def draw_organisms(world, world_width, world_height, display):
@@ -161,6 +162,25 @@ def main():
                 for cell_rendering in organism_rendering.cell_renderings(camera):
                     pygame.draw.polygon(display, cell_rendering['fill_color'], cell_rendering['vertices'])
                     pygame.draw.polygon(display, cell_rendering['border_color'], cell_rendering['vertices'], width=2)
+
+                # Draw yellow bounding rectangle
+                min_x, min_y, max_x, max_y = organism_rendering.bounding_rectangle()
+                # Convert world coordinates to screen coordinates
+                screen_x1, screen_y1 = camera.world_to_screen(min_x, min_y)
+                screen_x2, screen_y2 = camera.world_to_screen(max_x, max_y)
+                # Convert to pixels
+                pixel_x1 = Screen.to_pixels(screen_x1)
+                pixel_y1 = Screen.to_pixels(screen_y1)
+                pixel_x2 = Screen.to_pixels(screen_x2)
+                pixel_y2 = Screen.to_pixels(screen_y2)
+                # Draw rectangle
+                bounding_rect = pygame.Rect(
+                    pixel_x1,
+                    pixel_y1,
+                    pixel_x2 - pixel_x1,
+                    pixel_y2 - pixel_y1
+                )
+                pygame.draw.rect(display, YELLOW, bounding_rect, 2)
             else:
                 world.DestroyBody(organism.body)
                 organisms_to_remove.append(organism)
