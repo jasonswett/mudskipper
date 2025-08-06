@@ -169,10 +169,11 @@ def main():
                     pygame.draw.polygon(display, cell_rendering['fill_color'], cell_rendering['vertices'])
                     pygame.draw.polygon(display, cell_rendering['border_color'], cell_rendering['vertices'], width=2)
 
-                if organism_rendering.ghost_rendering():
-                    for cell_rendering in organism_rendering.ghost_rendering():
-                        pygame.draw.polygon(display, cell_rendering['fill_color'], cell_rendering['vertices'])
-                        pygame.draw.polygon(display, cell_rendering['border_color'], cell_rendering['vertices'], width=2)
+                # Draw ghost organisms for toroidal world
+                ghost_renderings = organism_rendering.ghost_rendering()
+                for cell_rendering in ghost_renderings:
+                    pygame.draw.polygon(display, cell_rendering['fill_color'], cell_rendering['vertices'])
+                    pygame.draw.polygon(display, cell_rendering['border_color'], cell_rendering['vertices'], width=2)
 
                 # Draw yellow bounding rectangle using pixel-accurate method
                 pixel_x1, pixel_y1, pixel_x2, pixel_y2 = organism_rendering.bounding_rectangle_pixels()
