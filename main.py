@@ -22,7 +22,9 @@ BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
 WHITE = (255, 255, 255)
 GRAY = (128, 128, 128)
+DARK_GRAY = (64, 64, 64)
 YELLOW = (255, 255, 0)
+RED = (255, 0, 0)
 ORGANISM_COUNT = 20
 
 # World and display constants
@@ -102,7 +104,8 @@ def main():
     world = Box2D.b2World(gravity=(0, 0))
     organisms = draw_organisms(world, world_width, world_height, display)
     food_morsels = create_food_morsels(world, world_width, world_height)
-    world.contactListener = ContactListener(organisms, food_morsels)
+    contact_listener = ContactListener(organisms, food_morsels)
+    world.contactListener = contact_listener
 
     # Create camera to view the 3x3 grid
     # Camera world size is the full 3x3 grid, viewport is the screen size
@@ -121,7 +124,8 @@ def main():
                     organisms.clear()
                     organisms = draw_organisms(world, world_width, world_height, display)
                     food_morsels = create_food_morsels(world, world_width, world_height)
-                    world.contactListener = ContactListener(organisms, food_morsels)
+                    contact_listener = ContactListener(organisms, food_morsels)
+                    world.contactListener = contact_listener
 
         # Continuous camera movement
         keys = pygame.key.get_pressed()
@@ -170,12 +174,8 @@ def main():
                     Screen.to_pixels(world_x2 - world_x1),
                     Screen.to_pixels(world_y2 - world_y1)
                 )
-                # The actual world (0,0 to 20,20) gets gray border when visible
-                tile_x = base_tile_x + grid_x
-                tile_y = base_tile_y + grid_y
-                is_main_world = (tile_x == 0 and tile_y == 0)
-                border_color = GRAY if is_main_world else WHITE
-                pygame.draw.rect(display, border_color, world_rect, 2)
+                # All tiles get dark gray borders
+                pygame.draw.rect(display, DARK_GRAY, world_rect, 1)
 
         # Draw organisms in all visible tiles
         for grid_x in range(tiles_to_draw_x):
@@ -216,7 +216,9 @@ def main():
                                 pixel_x2 - pixel_x1,
                                 pixel_y2 - pixel_y1
                             )
-                            pygame.draw.rect(display, YELLOW, bounding_rect, 2)
+                            # Use red bounding rectangle if organism is touching another organism
+                            rect_color = RED if contact_listener.is_organism_touching(organism) else YELLOW
+                            pygame.draw.rect(display, rect_color, bounding_rect, 2)
 
         # Update organisms and handle toroidal wrapping
         organisms_to_remove = []
