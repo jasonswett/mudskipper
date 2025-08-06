@@ -120,7 +120,6 @@ def main():
             organism.update_clock()
             if organism.is_alive():
                 org_pos = organism.body.position
-                print(f"Organism {i}: ({org_pos.x:.2f}, {org_pos.y:.2f})")
 
                 organism_rendering = OrganismRendering(organism, screen)
                 for cell_rendering in organism_rendering.cell_renderings(camera):
@@ -129,8 +128,6 @@ def main():
             else:
                 world.DestroyBody(organism.body)
                 organisms_to_remove.append(organism)
-
-        print()  # Line break between frames
 
         for organism in organisms_to_remove:
             organisms.remove(organism)
