@@ -87,8 +87,6 @@ def main():
     font = pygame.font.Font(None, 24)
     world = Box2D.b2World(gravity=(0, 0))
     organisms = draw_organisms(world, world_width, world_height, display)
-    food_morsels = create_food_morsels(world, world_width, world_height)
-    world.contactListener = ContactListener(organisms, food_morsels)
 
     # Create camera
     camera = Camera(world_width, world_height, screen.width, screen.height)
@@ -102,8 +100,6 @@ def main():
                 if event.key == pygame.K_SPACE:
                     organisms.clear()
                     organisms = draw_organisms(world, world_width, world_height, display)
-                    food_morsels = create_food_morsels(world, world_width, world_height)
-                    world.contactListener = ContactListener(organisms, food_morsels)
 
         # Continuous camera movement
         keys = pygame.key.get_pressed()
@@ -139,30 +135,9 @@ def main():
         for organism in organisms_to_remove:
             organisms.remove(organism)
 
-        # Remove eaten food and draw remaining food
-        food_morsels_to_remove = []
-        for food_morsel in food_morsels:
-            if food_morsel.eaten:
-                world.DestroyBody(food_morsel.body)
-                food_morsels_to_remove.append(food_morsel)
-            else:
-                pos = food_morsel.body.position
-                screen_x, screen_y = camera.world_to_screen(pos.x, pos.y)
-                x = Screen.to_pixels(screen_x)
-                y = Screen.to_pixels(screen_y)
-                radius = Screen.to_pixels(food_morsel.radius)
-                pygame.draw.circle(display, GREEN, (int(x), int(y)), int(radius))
-
-        for food_morsel in food_morsels_to_remove:
-            food_morsels.remove(food_morsel)
-
         organism_text = f"Organisms: {len(organisms)}"
         organism_surface = font.render(organism_text, False, WHITE)
         display.blit(organism_surface, (10, 10))
-
-        food_text = f"Food: {len(food_morsels)}"
-        food_surface = font.render(food_text, False, WHITE)
-        display.blit(food_surface, (10, 30))
 
         pygame.display.flip()
         clock.tick(60)
