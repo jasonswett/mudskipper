@@ -87,40 +87,64 @@ class OrganismRendering:
 
         return (int(min_x), int(min_y), int(max_x), int(max_y))
 
-    def ghost_rendering(self, world_width=20, world_height=20):
-        """Return ghost cell renderings if organism extends outside world bounds, otherwise empty list."""
+    def _get_wrap_offsets(self, world_width, world_height):
+        """Calculate all wrap offsets needed for ghost organisms."""
         min_x, min_y, max_x, max_y = self.bounding_rectangle()
 
-        # Check if organism extends outside world bounds
-        if not (min_x < 0 or min_y < 0 or max_x > world_width or max_y > world_height):
-            return []
-
-        ghost_renderings = []
-
-        # Calculate wrap offsets needed
         wrap_offsets = []
-        if min_x < 0:
+        wrap_left = min_x < 0
+        wrap_right = max_x > world_width
+        wrap_bottom = min_y < 0
+        wrap_top = max_y > world_height
+
+        # Single-edge wrapping
+        if wrap_left:
             wrap_offsets.append((world_width, 0))
-        if max_x > world_width:
+        if wrap_right:
             wrap_offsets.append((-world_width, 0))
-        if min_y < 0:
+        if wrap_bottom:
             wrap_offsets.append((0, world_height))
-        if max_y > world_height:
+        if wrap_top:
             wrap_offsets.append((0, -world_height))
 
         # Corner wrapping
-        if min_x < 0 and min_y < 0:
+        if wrap_left and wrap_bottom:
             wrap_offsets.append((world_width, world_height))
-        if min_x < 0 and max_y > world_height:
+        if wrap_left and wrap_top:
             wrap_offsets.append((world_width, -world_height))
-        if max_x > world_width and min_y < 0:
+        if wrap_right and wrap_bottom:
             wrap_offsets.append((-world_width, world_height))
-        if max_x > world_width and max_y > world_height:
+        if wrap_right and wrap_top:
             wrap_offsets.append((-world_width, -world_height))
 
-        # Generate ghost renderings for each wrap offset
+        return wrap_offsets
+
+    def ghost_rendering(self, world_width=20, world_height=20):
+        """Return ghost cell renderings if organism extends outside world bounds, otherwise empty list."""
+        wrap_offsets = self._get_wrap_offsets(world_width, world_height)
+
+        if not wrap_offsets:
+            return []
+
+        ghost_renderings = []
         for offset_x, offset_y in wrap_offsets:
             ghost_renderings.extend(self._cell_renderings_with_offset(offset_x, offset_y))
+
+        return ghost_renderings
+
+    def ghost_rendering_with_grid_offset(self, world_width, world_height, grid_offset_x, grid_offset_y):
+        """Return ghost cell renderings with additional grid offset for 3x3 display."""
+        wrap_offsets = self._get_wrap_offsets(world_width, world_height)
+
+        if not wrap_offsets:
+            return []
+
+        ghost_renderings = []
+        for offset_x, offset_y in wrap_offsets:
+            # Combine wrap offset with grid offset
+            total_offset_x = offset_x + grid_offset_x
+            total_offset_y = offset_y + grid_offset_y
+            ghost_renderings.extend(self._cell_renderings_with_offset(total_offset_x, total_offset_y))
 
         return ghost_renderings
 

@@ -109,8 +109,8 @@ def main():
     # World size (physics simulation area)
     world_width, world_height = (20, 20) # meters
 
-    # Display size (viewport window)
-    screen = Screen(30, 30) # unit: meters (viewport size)
+    # Display size (viewport window) - 3x3 grid of worlds
+    screen = Screen(60, 60) # unit: meters (viewport size for 3x3 grid)
     display = pygame.display.set_mode(screen.size_in_pixels())
     pygame.display.set_caption("Mudskipper")
     clock = pygame.time.Clock()
@@ -118,10 +118,10 @@ def main():
     world = Box2D.b2World(gravity=(0, 0))
     organisms = draw_organisms(world, world_width, world_height, display)
 
-    # Create camera and center the world on screen
-    camera = Camera(world_width, world_height, screen.width, screen.height)
-    camera.x = -((screen.width - world_width) / 2)
-    camera.y = -((screen.height - world_height) / 2)
+    # Create camera to view the 3x3 grid
+    camera = Camera(screen.width, screen.height, screen.width, screen.height)
+    camera.x = 0  # Start at top-left of viewport
+    camera.y = 0
 
     running = True
     while running:
@@ -146,24 +146,70 @@ def main():
 
         display.fill(BLACK)
 
-        # Draw gray border around the world
-        world_x1, world_y1 = camera.world_to_screen(0, 0)
-        world_x2, world_y2 = camera.world_to_screen(world_width, world_height)
-        world_rect = pygame.Rect(
-            Screen.to_pixels(world_x1),
-            Screen.to_pixels(world_y1),
-            Screen.to_pixels(world_x2 - world_x1),
-            Screen.to_pixels(world_y2 - world_y1)
-        )
-        pygame.draw.rect(display, GRAY, world_rect, 2)
+        # Draw 3x3 grid of world borders
+        for grid_x in range(3):
+            for grid_y in range(3):
+                # Calculate offset for this grid cell
+                offset_x = grid_x * world_width
+                offset_y = grid_y * world_height
 
-        # Remove dead organisms and draw living ones
+                # Draw world border for this grid cell
+                world_x1, world_y1 = camera.world_to_screen(offset_x, offset_y)
+                world_x2, world_y2 = camera.world_to_screen(offset_x + world_width, offset_y + world_height)
+                world_rect = pygame.Rect(
+                    Screen.to_pixels(world_x1),
+                    Screen.to_pixels(world_y1),
+                    Screen.to_pixels(world_x2 - world_x1),
+                    Screen.to_pixels(world_y2 - world_y1)
+                )
+                # Center world (1,1) gets gray border, others get white
+                border_color = GRAY if grid_x == 1 and grid_y == 1 else WHITE
+                pygame.draw.rect(display, border_color, world_rect, 2)
+
+        # Draw organisms in all 9 grid cells
+        for grid_x in range(3):
+            for grid_y in range(3):
+                # Calculate offset for this grid cell
+                offset_x = grid_x * world_width
+                offset_y = grid_y * world_height
+
+                # Draw all organisms in this grid cell
+                for organism in organisms:
+                    if organism.is_alive():
+                        organism_rendering = OrganismRendering(organism, screen, camera)
+
+                        # Draw organism at offset position for this grid cell
+                        cell_renderings = organism_rendering._cell_renderings_with_offset(offset_x, offset_y)
+                        for cell_rendering in cell_renderings:
+                            pygame.draw.polygon(display, cell_rendering['fill_color'], cell_rendering['vertices'])
+                            pygame.draw.polygon(display, cell_rendering['border_color'], cell_rendering['vertices'], width=2)
+
+                        # Draw ghost organisms for this grid cell
+                        ghost_renderings = organism_rendering.ghost_rendering_with_grid_offset(world_width, world_height, offset_x, offset_y)
+                        for ghost_rendering in ghost_renderings:
+                            pygame.draw.polygon(display, ghost_rendering['fill_color'], ghost_rendering['vertices'])
+                            pygame.draw.polygon(display, ghost_rendering['border_color'], ghost_rendering['vertices'], width=2)
+
+                        # Draw yellow bounding rectangle only in center grid
+                        if grid_x == 1 and grid_y == 1:
+                            pixel_x1, pixel_y1, pixel_x2, pixel_y2 = organism_rendering.bounding_rectangle_pixels()
+                            pixel_x1 += Screen.to_pixels(offset_x)
+                            pixel_y1 += Screen.to_pixels(offset_y)
+                            pixel_x2 += Screen.to_pixels(offset_x)
+                            pixel_y2 += Screen.to_pixels(offset_y)
+                            bounding_rect = pygame.Rect(
+                                pixel_x1,
+                                pixel_y1,
+                                pixel_x2 - pixel_x1,
+                                pixel_y2 - pixel_y1
+                            )
+                            pygame.draw.rect(display, YELLOW, bounding_rect, 2)
+
+        # Update organisms and handle toroidal wrapping
         organisms_to_remove = []
-        for i, organism in enumerate(organisms):
+        for organism in organisms:
             organism.update_clock()
             if organism.is_alive():
-                org_pos = organism.body.position
-
                 organism_rendering = OrganismRendering(organism, screen, camera)
 
                 # Check if organism needs toroidal teleportation
@@ -171,28 +217,6 @@ def main():
                 if wrap_position:
                     # Teleport organism to wrapped position
                     organism.body.position = wrap_position
-                    # Note: Ghost will automatically disappear since organism is no longer outside bounds
-
-                # Draw main organism
-                for cell_rendering in organism_rendering.cell_renderings():
-                    pygame.draw.polygon(display, cell_rendering['fill_color'], cell_rendering['vertices'])
-                    pygame.draw.polygon(display, cell_rendering['border_color'], cell_rendering['vertices'], width=2)
-
-                # Draw ghost organisms for toroidal world
-                ghost_renderings = organism_rendering.ghost_rendering(world_width, world_height)
-                for cell_rendering in ghost_renderings:
-                    pygame.draw.polygon(display, cell_rendering['fill_color'], cell_rendering['vertices'])
-                    pygame.draw.polygon(display, cell_rendering['border_color'], cell_rendering['vertices'], width=2)
-
-                # Draw yellow bounding rectangle using pixel-accurate method
-                pixel_x1, pixel_y1, pixel_x2, pixel_y2 = organism_rendering.bounding_rectangle_pixels()
-                bounding_rect = pygame.Rect(
-                    pixel_x1,
-                    pixel_y1,
-                    pixel_x2 - pixel_x1,
-                    pixel_y2 - pixel_y1
-                )
-                pygame.draw.rect(display, YELLOW, bounding_rect, 2)
             else:
                 world.DestroyBody(organism.body)
                 organisms_to_remove.append(organism)
