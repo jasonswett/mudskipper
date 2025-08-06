@@ -1,6 +1,10 @@
 Base hexagon reckoning on https://www.redblobgames.com/grids/hexagons/
 I use a flat-side-up orientation.
 
+## Architecture
+
+This project uses pyenv. Remember to do source venv/bin/activate.
+
 ## Workflow
 
 In general, don't make commits before you check with me.

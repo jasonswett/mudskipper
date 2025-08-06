@@ -14,9 +14,11 @@ def test_organism_rendering_initialization():
     cellular_body = CellularBody([cell])
     organism = Organism(world, cellular_body, (5, 5))
 
-    # Create screen and organism rendering
+    # Create screen, camera, and organism rendering
     screen = Screen(20, 20)
-    organism_rendering = OrganismRendering(organism, screen)
+    from src.camera import Camera
+    camera = Camera(10, 10, 20, 20)
+    organism_rendering = OrganismRendering(organism, screen, camera)
 
     # Basic assertion to verify initialization
     assert organism_rendering.organism == organism
@@ -25,7 +27,9 @@ def test_bounding_rectangle():
     # Create a mock organism rendering
     mock_organism = Mock()
     screen = Screen(20, 20)
-    organism_rendering = OrganismRendering(mock_organism, screen)
+    from src.camera import Camera
+    camera = Camera(10, 10, 20, 20)
+    organism_rendering = OrganismRendering(mock_organism, screen, camera)
 
     # Stub vertices() method with hard-coded values
     # Two hexagon fixtures with vertices that create a bounding rectangle

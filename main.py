@@ -38,7 +38,7 @@ def draw_organisms(world, world_width, world_height, display):
     cells = [CellBuilder(cell_gene, position).cell()
              for cell_gene, position in zip(cell_genes, positions)]
 
-    organisms.append(Organism(world, CellularBody(cells), (2, 2)))
+    organisms.append(Organism(world, CellularBody(cells), (0.5, 0.5)))
 
     cell_genes = [
         CellGene("000" + "100" + "100" + "11"),
@@ -164,13 +164,18 @@ def main():
             if organism.is_alive():
                 org_pos = organism.body.position
 
-                organism_rendering = OrganismRendering(organism, screen)
-                for cell_rendering in organism_rendering.cell_renderings(camera):
+                organism_rendering = OrganismRendering(organism, screen, camera)
+                for cell_rendering in organism_rendering.cell_renderings():
                     pygame.draw.polygon(display, cell_rendering['fill_color'], cell_rendering['vertices'])
                     pygame.draw.polygon(display, cell_rendering['border_color'], cell_rendering['vertices'], width=2)
 
+                if organism_rendering.ghost_rendering():
+                    for cell_rendering in organism_rendering.ghost_rendering():
+                        pygame.draw.polygon(display, cell_rendering['fill_color'], cell_rendering['vertices'])
+                        pygame.draw.polygon(display, cell_rendering['border_color'], cell_rendering['vertices'], width=2)
+
                 # Draw yellow bounding rectangle using pixel-accurate method
-                pixel_x1, pixel_y1, pixel_x2, pixel_y2 = organism_rendering.bounding_rectangle_pixels(camera)
+                pixel_x1, pixel_y1, pixel_x2, pixel_y2 = organism_rendering.bounding_rectangle_pixels()
                 bounding_rect = pygame.Rect(
                     pixel_x1,
                     pixel_y1,

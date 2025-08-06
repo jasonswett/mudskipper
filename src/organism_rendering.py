@@ -1,19 +1,28 @@
 from .screen import Screen
 
 class OrganismRendering:
-    def __init__(self, organism, screen):
+    def __init__(self, organism, screen, camera):
         self.organism = organism
         self.screen = screen
+        self.camera = camera
 
-    def cell_renderings(self, camera):
+    def cell_renderings(self):
+        return self._cell_renderings_with_offset(0, 0)
+
+    def _cell_renderings_with_offset(self, offset_x, offset_y):
+        """Generate cell renderings with optional world coordinate offset."""
         cell_renderings = []
-        world_vertices = self.vertices()  # Use the vertices() method
+        world_vertices = self.vertices()
 
         for i, fixture_vertices in enumerate(world_vertices):
-            # Apply camera transformation to world vertices
             screen_vertices = []
             for world_x, world_y in fixture_vertices:
-                screen_x, screen_y = camera.world_to_screen(world_x, world_y)
+                # Apply offset to world coordinates
+                offset_world_x = world_x + offset_x
+                offset_world_y = world_y + offset_y
+
+                # Transform to screen coordinates
+                screen_x, screen_y = self.camera.world_to_screen(offset_world_x, offset_world_y)
                 pixel_x = Screen.to_pixels(screen_x)
                 pixel_y = Screen.to_pixels(screen_y)
                 screen_vertices.append((pixel_x, pixel_y))
@@ -60,13 +69,13 @@ class OrganismRendering:
 
         return (min_x, min_y, max_x, max_y)
 
-    def bounding_rectangle_pixels(self, camera):
+    def bounding_rectangle_pixels(self):
         world_vertices = self.vertices()
 
         pixel_points = []
         for fixture_vertices in world_vertices:
             for world_x, world_y in fixture_vertices:
-                screen_x, screen_y = camera.world_to_screen(world_x, world_y)
+                screen_x, screen_y = self.camera.world_to_screen(world_x, world_y)
                 pixel_x = Screen.to_pixels(screen_x)
                 pixel_y = Screen.to_pixels(screen_y)
                 pixel_points.append((pixel_x, pixel_y))
@@ -77,3 +86,40 @@ class OrganismRendering:
         max_y = max(point[1] for point in pixel_points)
 
         return (int(min_x), int(min_y), int(max_x), int(max_y))
+
+    def ghost_rendering(self, world_width=20, world_height=20):
+        """Return ghost cell renderings if organism extends outside world bounds, otherwise empty list."""
+        min_x, min_y, max_x, max_y = self.bounding_rectangle()
+
+        # Check if organism extends outside world bounds
+        if not (min_x < 0 or min_y < 0 or max_x > world_width or max_y > world_height):
+            return []
+
+        ghost_renderings = []
+
+        # Calculate wrap offsets needed
+        wrap_offsets = []
+        if min_x < 0:
+            wrap_offsets.append((world_width, 0))
+        if max_x > world_width:
+            wrap_offsets.append((-world_width, 0))
+        if min_y < 0:
+            wrap_offsets.append((0, world_height))
+        if max_y > world_height:
+            wrap_offsets.append((0, -world_height))
+
+        # Corner wrapping
+        if min_x < 0 and min_y < 0:
+            wrap_offsets.append((world_width, world_height))
+        if min_x < 0 and max_y > world_height:
+            wrap_offsets.append((world_width, -world_height))
+        if max_x > world_width and min_y < 0:
+            wrap_offsets.append((-world_width, world_height))
+        if max_x > world_width and max_y > world_height:
+            wrap_offsets.append((-world_width, -world_height))
+
+        # Generate ghost renderings for each wrap offset
+        for offset_x, offset_y in wrap_offsets:
+            ghost_renderings.extend(self._cell_renderings_with_offset(offset_x, offset_y))
+
+        return ghost_renderings
