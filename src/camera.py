@@ -8,9 +8,9 @@ class Camera:
         self.viewport_height = viewport_height
 
     def move(self, dx, dy):
-        # Keep camera within world bounds
-        self.x = max(0, min(self.world_width - self.viewport_width, self.x + dx))
-        self.y = max(0, min(self.world_height - self.viewport_height, self.y + dy))
+        # Allow camera to move freely for infinite panning
+        self.x += dx
+        self.y += dy
 
     def world_to_screen(self, world_x, world_y):
         """Convert world coordinates to screen coordinates."""

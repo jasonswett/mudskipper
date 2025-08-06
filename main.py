@@ -128,9 +128,9 @@ def main():
     # Create camera to view the 3x3 grid
     # Camera world size is the full 3x3 grid, viewport is the screen size
     camera = Camera(WORLD_WIDTH * GRID_SIZE, WORLD_HEIGHT * GRID_SIZE, screen.width, screen.height)
-    # Start camera centered on the middle world
-    camera.x = WORLD_WIDTH - (screen.width / 2)
-    camera.y = WORLD_HEIGHT - (screen.height / 2)
+    # Start camera at origin
+    camera.x = 0
+    camera.y = 0
 
     running = True
     while running:
@@ -155,12 +155,20 @@ def main():
 
         display.fill(BLACK)
 
+        # Calculate which "virtual tile" the camera center is in
+        camera_center_x = camera.x + (camera.viewport_width / 2)
+        camera_center_y = camera.y + (camera.viewport_height / 2)
+
+        # Determine the base tile position (which multiple of world_width/height we're at)
+        base_tile_x = int(camera_center_x // world_width) - 1
+        base_tile_y = int(camera_center_y // world_height) - 1
+
         # Draw 3x3 grid of world borders
         for grid_x in range(GRID_SIZE):
             for grid_y in range(GRID_SIZE):
-                # Calculate offset for this grid cell
-                offset_x = grid_x * world_width
-                offset_y = grid_y * world_height
+                # Calculate offset for this grid cell relative to the base tile
+                offset_x = (base_tile_x + grid_x) * world_width
+                offset_y = (base_tile_y + grid_y) * world_height
 
                 # Draw world border for this grid cell
                 world_x1, world_y1 = camera.world_to_screen(offset_x, offset_y)
@@ -171,16 +179,19 @@ def main():
                     Screen.to_pixels(world_x2 - world_x1),
                     Screen.to_pixels(world_y2 - world_y1)
                 )
-                # Center world (1,1) gets gray border, others get white
-                border_color = GRAY if grid_x == 1 and grid_y == 1 else WHITE
+                # The actual world (0,0 to 20,20) gets gray border when visible
+                tile_x = base_tile_x + grid_x
+                tile_y = base_tile_y + grid_y
+                is_main_world = (tile_x == 0 and tile_y == 0)
+                border_color = GRAY if is_main_world else WHITE
                 pygame.draw.rect(display, border_color, world_rect, 2)
 
         # Draw organisms in all 9 grid cells
         for grid_x in range(GRID_SIZE):
             for grid_y in range(GRID_SIZE):
-                # Calculate offset for this grid cell
-                offset_x = grid_x * world_width
-                offset_y = grid_y * world_height
+                # Calculate offset for this grid cell relative to the base tile
+                offset_x = (base_tile_x + grid_x) * world_width
+                offset_y = (base_tile_y + grid_y) * world_height
 
                 # Draw all organisms in this grid cell
                 for organism in organisms:
@@ -199,8 +210,10 @@ def main():
                             pygame.draw.polygon(display, ghost_rendering['fill_color'], ghost_rendering['vertices'])
                             pygame.draw.polygon(display, ghost_rendering['border_color'], ghost_rendering['vertices'], width=2)
 
-                        # Draw yellow bounding rectangle only in center grid
-                        if grid_x == 1 and grid_y == 1:
+                        # Draw yellow bounding rectangle only in the main world
+                        tile_x = base_tile_x + grid_x
+                        tile_y = base_tile_y + grid_y
+                        if tile_x == 0 and tile_y == 0:
                             pixel_x1, pixel_y1, pixel_x2, pixel_y2 = organism_rendering.bounding_rectangle_pixels()
                             pixel_x1 += Screen.to_pixels(offset_x)
                             pixel_y1 += Screen.to_pixels(offset_y)
@@ -233,9 +246,15 @@ def main():
         for organism in organisms_to_remove:
             organisms.remove(organism)
 
+        # Display debug info
         organism_text = f"Organisms: {len(organisms)}"
         organism_surface = font.render(organism_text, False, WHITE)
         display.blit(organism_surface, (10, 10))
+
+        # Camera and tile debug info
+        camera_text = f"Camera: ({camera.x:.1f}, {camera.y:.1f}) | Base tile: ({base_tile_x}, {base_tile_y})"
+        camera_surface = font.render(camera_text, False, WHITE)
+        display.blit(camera_surface, (10, 35))
 
         pygame.display.flip()
         clock.tick(60)
