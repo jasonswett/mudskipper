@@ -9,6 +9,7 @@ from src.cellular_body_builder import CellularBodyBuilder
 
 from src.cell_gene import CellGene
 from src.cell_builder import CellBuilder
+from src.cellular_body import CellularBody
 
 from src.organism import Organism
 from src.organism_rendering import OrganismRendering
@@ -31,18 +32,23 @@ def draw_organisms(world, world_width, world_height, display):
     cell_genes = [
         CellGene("000" + "100" + "100" + "11"),
         CellGene("011" + "100" + "100" + "10"),
+        CellGene("001" + "011" + "100" + "10"),
+    ]
+    positions = [(0, 0, 0), (1, 0, -1), (1, -1, 0)]
+    cells = [CellBuilder(cell_gene, position).cell()
+             for cell_gene, position in zip(cell_genes, positions)]
+
+    organisms.append(Organism(world, CellularBody(cells), (2, 2)))
+
+    cell_genes = [
+        CellGene("000" + "100" + "100" + "11"),
+        CellGene("011" + "100" + "100" + "10"),
     ]
     positions = [(0, 0, 0), (1, 0, -1)]
     cells = [CellBuilder(cell_gene, position).cell()
              for cell_gene, position in zip(cell_genes, positions)]
 
-    # Create a cellular body with these cells
-    from src.cellular_body import CellularBody
-    cellular_body = CellularBody(cells)
-
-    x = 5
-    y = 5
-    organisms.append(Organism(world, cellular_body, (x, y)))
+    organisms.append(Organism(world, CellularBody(cells), (5, 5)))
 
     return organisms
 
