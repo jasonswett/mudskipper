@@ -29,8 +29,8 @@ ORGANISM_COUNT = 3
 WORLD_WIDTH = 20  # meters
 WORLD_HEIGHT = 20  # meters
 GRID_SIZE = 3  # 3x3 grid
-SCREEN_WIDTH = WORLD_WIDTH * GRID_SIZE  # 60 meters
-SCREEN_HEIGHT = WORLD_HEIGHT * GRID_SIZE  # 60 meters
+SCREEN_WIDTH = 50
+SCREEN_HEIGHT = 35
 
 def draw_organisms(world, world_width, world_height, display):
     organisms = []
@@ -126,9 +126,11 @@ def main():
     organisms = draw_organisms(world, world_width, world_height, display)
 
     # Create camera to view the 3x3 grid
-    camera = Camera(screen.width, screen.height, screen.width, screen.height)
-    camera.x = 0  # Start at top-left of viewport
-    camera.y = 0
+    # Camera world size is the full 3x3 grid, viewport is the screen size
+    camera = Camera(WORLD_WIDTH * GRID_SIZE, WORLD_HEIGHT * GRID_SIZE, screen.width, screen.height)
+    # Start camera centered on the middle world
+    camera.x = WORLD_WIDTH - (screen.width / 2)
+    camera.y = WORLD_HEIGHT - (screen.height / 2)
 
     running = True
     while running:
