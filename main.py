@@ -20,6 +20,7 @@ from src.camera import Camera
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
 WHITE = (255, 255, 255)
+GRAY = (128, 128, 128)
 ORGANISM_COUNT = 3
 
 def draw_organisms(world, world_width, world_height, display):
@@ -110,8 +111,10 @@ def main():
     world = Box2D.b2World(gravity=(0, 0))
     organisms = draw_organisms(world, world_width, world_height, display)
 
-    # Create camera
+    # Create camera and center the world on screen
     camera = Camera(world_width, world_height, screen.width, screen.height)
+    camera.x = -((screen.width - world_width) / 2)
+    camera.y = -((screen.height - world_height) / 2)
 
     running = True
     while running:
@@ -135,6 +138,17 @@ def main():
             camera.move(0, 0.5)
 
         display.fill(BLACK)
+
+        # Draw gray border around the world
+        world_x1, world_y1 = camera.world_to_screen(0, 0)
+        world_x2, world_y2 = camera.world_to_screen(world_width, world_height)
+        world_rect = pygame.Rect(
+            Screen.to_pixels(world_x1),
+            Screen.to_pixels(world_y1),
+            Screen.to_pixels(world_x2 - world_x1),
+            Screen.to_pixels(world_y2 - world_y1)
+        )
+        pygame.draw.rect(display, GRAY, world_rect, 2)
 
         # Remove dead organisms and draw living ones
         organisms_to_remove = []
