@@ -25,6 +25,13 @@ GRAY = (128, 128, 128)
 YELLOW = (255, 255, 0)
 ORGANISM_COUNT = 3
 
+# World and display constants
+WORLD_WIDTH = 20  # meters
+WORLD_HEIGHT = 20  # meters
+GRID_SIZE = 3  # 3x3 grid
+SCREEN_WIDTH = WORLD_WIDTH * GRID_SIZE  # 60 meters
+SCREEN_HEIGHT = WORLD_HEIGHT * GRID_SIZE  # 60 meters
+
 def draw_organisms(world, world_width, world_height, display):
     organisms = []
     remaining_organisms = ORGANISM_COUNT
@@ -107,10 +114,10 @@ def create_walls(world, world_width, world_height):
 def main():
     pygame.init()
     # World size (physics simulation area)
-    world_width, world_height = (20, 20) # meters
+    world_width, world_height = (WORLD_WIDTH, WORLD_HEIGHT)
 
     # Display size (viewport window) - 3x3 grid of worlds
-    screen = Screen(60, 60) # unit: meters (viewport size for 3x3 grid)
+    screen = Screen(SCREEN_WIDTH, SCREEN_HEIGHT)
     display = pygame.display.set_mode(screen.size_in_pixels())
     pygame.display.set_caption("Mudskipper")
     clock = pygame.time.Clock()
@@ -147,8 +154,8 @@ def main():
         display.fill(BLACK)
 
         # Draw 3x3 grid of world borders
-        for grid_x in range(3):
-            for grid_y in range(3):
+        for grid_x in range(GRID_SIZE):
+            for grid_y in range(GRID_SIZE):
                 # Calculate offset for this grid cell
                 offset_x = grid_x * world_width
                 offset_y = grid_y * world_height
@@ -167,8 +174,8 @@ def main():
                 pygame.draw.rect(display, border_color, world_rect, 2)
 
         # Draw organisms in all 9 grid cells
-        for grid_x in range(3):
-            for grid_y in range(3):
+        for grid_x in range(GRID_SIZE):
+            for grid_y in range(GRID_SIZE):
                 # Calculate offset for this grid cell
                 offset_x = grid_x * world_width
                 offset_y = grid_y * world_height
