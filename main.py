@@ -101,6 +101,8 @@ def main():
     font = pygame.font.Font(None, 24)
     world = Box2D.b2World(gravity=(0, 0))
     organisms = draw_organisms(world, world_width, world_height, display)
+    food_morsels = create_food_morsels(world, world_width, world_height)
+    world.contactListener = ContactListener(organisms, food_morsels)
 
     # Create camera to view the 3x3 grid
     # Camera world size is the full 3x3 grid, viewport is the screen size
@@ -118,6 +120,8 @@ def main():
                 if event.key == pygame.K_SPACE:
                     organisms.clear()
                     organisms = draw_organisms(world, world_width, world_height, display)
+                    food_morsels = create_food_morsels(world, world_width, world_height)
+                    world.contactListener = ContactListener(organisms, food_morsels)
 
         # Continuous camera movement
         keys = pygame.key.get_pressed()
@@ -223,6 +227,34 @@ def main():
         for organism in organisms_to_remove:
             organisms.remove(organism)
 
+        # Draw food morsels in all visible tiles
+        for grid_x in range(GRID_SIZE):
+            for grid_y in range(GRID_SIZE):
+                # Calculate offset for this grid cell relative to the base tile
+                offset_x = (base_tile_x + grid_x) * world_width
+                offset_y = (base_tile_y + grid_y) * world_height
+
+                # Draw all food morsels in this grid cell
+                for food_morsel in food_morsels:
+                    if not food_morsel.eaten:
+                        pos = food_morsel.body.position
+                        # Apply offset for this grid cell
+                        screen_x, screen_y = camera.world_to_screen(pos.x + offset_x, pos.y + offset_y)
+                        x = Screen.to_pixels(screen_x)
+                        y = Screen.to_pixels(screen_y)
+                        radius = Screen.to_pixels(food_morsel.radius)
+                        pygame.draw.circle(display, GREEN, (int(x), int(y)), int(radius))
+
+        # Remove eaten food morsels
+        food_morsels_to_remove = []
+        for food_morsel in food_morsels:
+            if food_morsel.eaten:
+                world.DestroyBody(food_morsel.body)
+                food_morsels_to_remove.append(food_morsel)
+
+        for food_morsel in food_morsels_to_remove:
+            food_morsels.remove(food_morsel)
+
         # Display debug info
         organism_text = f"Organisms: {len(organisms)}"
         organism_surface = font.render(organism_text, False, WHITE)
@@ -232,6 +264,10 @@ def main():
         camera_text = f"Camera: ({camera.x:.1f}, {camera.y:.1f}) | Base tile: ({base_tile_x}, {base_tile_y})"
         camera_surface = font.render(camera_text, False, WHITE)
         display.blit(camera_surface, (10, 35))
+
+        food_text = f"Food: {len(food_morsels)}"
+        food_surface = font.render(food_text, False, WHITE)
+        display.blit(food_surface, (10, 60))
 
         pygame.display.flip()
         clock.tick(60)
