@@ -7,6 +7,9 @@ from src.genome import Genome
 from src.cell import Cell
 from src.cellular_body_builder import CellularBodyBuilder
 
+from src.cell_gene import CellGene
+from src.cell_builder import CellBuilder
+
 from src.organism import Organism
 from src.organism_rendering import OrganismRendering
 from src.screen import Screen
@@ -23,6 +26,25 @@ def draw_organisms(world, world_width, world_height, display):
     organisms = []
     remaining_organisms = ORGANISM_COUNT
 
+    cell_genes = [
+        CellGene("000" + "100" + "100" + "11"),
+        CellGene("011" + "100" + "100" + "10"),
+    ]
+    positions = [(0, 0, 0), (1, 0, -1)]
+    cells = [CellBuilder(cell_gene, position).cell()
+             for cell_gene, position in zip(cell_genes, positions)]
+
+    # Create a cellular body with these cells
+    from src.cellular_body import CellularBody
+    cellular_body = CellularBody(cells)
+
+    x = 5
+    y = 5
+    organisms.append(Organism(world, cellular_body, (x, y)))
+
+    return organisms
+
+    # This code is unreachable due to the return above - removing it
     while remaining_organisms > 0:
         genome = Genome(2)
         cellular_body_builder = CellularBodyBuilder(genome.cell_genes())
