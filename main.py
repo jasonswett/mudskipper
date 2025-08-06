@@ -101,10 +101,10 @@ def create_walls(world, world_width, world_height):
 def main():
     pygame.init()
     # World size (physics simulation area)
-    world_width, world_height = (10, 10) # meters
+    world_width, world_height = (20, 20) # meters
 
     # Display size (viewport window)
-    screen = Screen(20, 20) # unit: meters (viewport size)
+    screen = Screen(30, 30) # unit: meters (viewport size)
     display = pygame.display.set_mode(screen.size_in_pixels())
     pygame.display.set_caption("Mudskipper")
     clock = pygame.time.Clock()
@@ -163,17 +163,8 @@ def main():
                     pygame.draw.polygon(display, cell_rendering['fill_color'], cell_rendering['vertices'])
                     pygame.draw.polygon(display, cell_rendering['border_color'], cell_rendering['vertices'], width=2)
 
-                # Draw yellow bounding rectangle
-                min_x, min_y, max_x, max_y = organism_rendering.bounding_rectangle()
-                # Convert world coordinates to screen coordinates
-                screen_x1, screen_y1 = camera.world_to_screen(min_x, min_y)
-                screen_x2, screen_y2 = camera.world_to_screen(max_x, max_y)
-                # Convert to pixels
-                pixel_x1 = Screen.to_pixels(screen_x1)
-                pixel_y1 = Screen.to_pixels(screen_y1)
-                pixel_x2 = Screen.to_pixels(screen_x2)
-                pixel_y2 = Screen.to_pixels(screen_y2)
-                # Draw rectangle
+                # Draw yellow bounding rectangle using pixel-accurate method
+                pixel_x1, pixel_y1, pixel_x2, pixel_y2 = organism_rendering.bounding_rectangle_pixels(camera)
                 bounding_rect = pygame.Rect(
                     pixel_x1,
                     pixel_y1,
