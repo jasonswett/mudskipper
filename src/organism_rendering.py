@@ -123,3 +123,38 @@ class OrganismRendering:
             ghost_renderings.extend(self._cell_renderings_with_offset(offset_x, offset_y))
 
         return ghost_renderings
+
+    def is_completely_outside_world(self, world_width=20, world_height=20):
+        """Check if organism's bounding rectangle is completely outside world bounds."""
+        min_x, min_y, max_x, max_y = self.bounding_rectangle()
+
+        # Check if completely outside on any side
+        completely_left = max_x < 0
+        completely_right = min_x > world_width
+        completely_bottom = max_y < 0
+        completely_top = min_y > world_height
+
+        return completely_left or completely_right or completely_bottom or completely_top
+
+    def get_wrap_position(self, world_width=20, world_height=20):
+        """Get the wrapped position for toroidal teleportation."""
+        if not self.is_completely_outside_world(world_width, world_height):
+            return None
+
+        current_x, current_y = self.organism.body.position
+        new_x, new_y = current_x, current_y
+
+        # Wrap position based on which side we exited
+        min_x, min_y, max_x, max_y = self.bounding_rectangle()
+
+        if max_x < 0:  # Completely left
+            new_x += world_width
+        elif min_x > world_width:  # Completely right
+            new_x -= world_width
+
+        if max_y < 0:  # Completely bottom
+            new_y += world_height
+        elif min_y > world_height:  # Completely top
+            new_y -= world_height
+
+        return (new_x, new_y)

@@ -165,12 +165,21 @@ def main():
                 org_pos = organism.body.position
 
                 organism_rendering = OrganismRendering(organism, screen, camera)
+
+                # Check if organism needs toroidal teleportation
+                wrap_position = organism_rendering.get_wrap_position(world_width, world_height)
+                if wrap_position:
+                    # Teleport organism to wrapped position
+                    organism.body.position = wrap_position
+                    # Note: Ghost will automatically disappear since organism is no longer outside bounds
+
+                # Draw main organism
                 for cell_rendering in organism_rendering.cell_renderings():
                     pygame.draw.polygon(display, cell_rendering['fill_color'], cell_rendering['vertices'])
                     pygame.draw.polygon(display, cell_rendering['border_color'], cell_rendering['vertices'], width=2)
 
                 # Draw ghost organisms for toroidal world
-                ghost_renderings = organism_rendering.ghost_rendering()
+                ghost_renderings = organism_rendering.ghost_rendering(world_width, world_height)
                 for cell_rendering in ghost_renderings:
                     pygame.draw.polygon(display, cell_rendering['fill_color'], cell_rendering['vertices'])
                     pygame.draw.polygon(display, cell_rendering['border_color'], cell_rendering['vertices'], width=2)
