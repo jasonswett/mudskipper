@@ -136,17 +136,27 @@ def main():
 
         display.fill(BLACK)
 
-        # Calculate which "virtual tile" the camera center is in
-        camera_center_x = camera.x + (camera.viewport_width / 2)
-        camera_center_y = camera.y + (camera.viewport_height / 2)
+        # Calculate which tiles are needed based on what the camera can see
+        # Find the leftmost and rightmost world coordinates that are visible
+        left_world = camera.x
+        right_world = camera.x + screen.width
+        top_world = camera.y
+        bottom_world = camera.y + screen.height
 
-        # Determine the base tile position (which multiple of world_width/height we're at)
-        base_tile_x = int(camera_center_x // world_width) - 1
-        base_tile_y = int(camera_center_y // world_height) - 1
+        # Calculate which tiles we need to cover this visible area
+        left_tile = int(left_world // world_width) - 1  # Extra tile on left
+        right_tile = int(right_world // world_width) + 1  # Extra tile on right
+        top_tile = int(top_world // world_height) - 1  # Extra tile on top
+        bottom_tile = int(bottom_world // world_height) + 1  # Extra tile on bottom
 
-        # Draw 3x3 grid of world borders
-        for grid_x in range(GRID_SIZE):
-            for grid_y in range(GRID_SIZE):
+        base_tile_x = left_tile
+        base_tile_y = top_tile
+        tiles_to_draw_x = right_tile - left_tile + 1
+        tiles_to_draw_y = bottom_tile - top_tile + 1
+
+        # Draw all necessary tiles to cover the visible area
+        for grid_x in range(tiles_to_draw_x):
+            for grid_y in range(tiles_to_draw_y):
                 # Calculate offset for this grid cell relative to the base tile
                 offset_x = (base_tile_x + grid_x) * world_width
                 offset_y = (base_tile_y + grid_y) * world_height
@@ -167,9 +177,9 @@ def main():
                 border_color = GRAY if is_main_world else WHITE
                 pygame.draw.rect(display, border_color, world_rect, 2)
 
-        # Draw organisms in all 9 grid cells
-        for grid_x in range(GRID_SIZE):
-            for grid_y in range(GRID_SIZE):
+        # Draw organisms in all visible tiles
+        for grid_x in range(tiles_to_draw_x):
+            for grid_y in range(tiles_to_draw_y):
                 # Calculate offset for this grid cell relative to the base tile
                 offset_x = (base_tile_x + grid_x) * world_width
                 offset_y = (base_tile_y + grid_y) * world_height
@@ -228,8 +238,8 @@ def main():
             organisms.remove(organism)
 
         # Draw food morsels in all visible tiles
-        for grid_x in range(GRID_SIZE):
-            for grid_y in range(GRID_SIZE):
+        for grid_x in range(tiles_to_draw_x):
+            for grid_y in range(tiles_to_draw_y):
                 # Calculate offset for this grid cell relative to the base tile
                 offset_x = (base_tile_x + grid_x) * world_width
                 offset_y = (base_tile_y + grid_y) * world_height
@@ -264,6 +274,11 @@ def main():
         camera_text = f"Camera: ({camera.x:.1f}, {camera.y:.1f}) | Base tile: ({base_tile_x}, {base_tile_y})"
         camera_surface = font.render(camera_text, False, WHITE)
         display.blit(camera_surface, (10, 35))
+
+        # Show which tiles are being drawn
+        tiles_text = f"Drawing tiles: X[{base_tile_x} to {base_tile_x + tiles_to_draw_x - 1}] Y[{base_tile_y} to {base_tile_y + tiles_to_draw_y - 1}]"
+        tiles_surface = font.render(tiles_text, False, WHITE)
+        display.blit(tiles_surface, (10, 85))
 
         food_text = f"Food: {len(food_morsels)}"
         food_surface = font.render(food_text, False, WHITE)

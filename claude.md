@@ -7,7 +7,7 @@ This project uses pyenv. Remember to do source venv/bin/activate.
 
 ## Workflow
 
-In general, don't make commits before you check with me.
+Don't make commits before you check with me.
 Push after every commit.
 
 Don't comment out code. Just delete it.
