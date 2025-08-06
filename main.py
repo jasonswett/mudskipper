@@ -23,7 +23,7 @@ GREEN = (0, 255, 0)
 WHITE = (255, 255, 255)
 GRAY = (128, 128, 128)
 YELLOW = (255, 255, 0)
-ORGANISM_COUNT = 3
+ORGANISM_COUNT = 20
 
 # World and display constants
 WORLD_WIDTH = 20  # meters
@@ -35,29 +35,6 @@ SCREEN_HEIGHT = 35
 def draw_organisms(world, world_width, world_height, display):
     organisms = []
     remaining_organisms = ORGANISM_COUNT
-
-    cell_genes = [
-        CellGene("000" + "100" + "100" + "11"),
-        CellGene("011" + "100" + "100" + "10"),
-        CellGene("001" + "011" + "100" + "10"),
-    ]
-    positions = [(0, 0, 0), (1, 0, -1), (1, -1, 0)]
-    cells = [CellBuilder(cell_gene, position).cell()
-             for cell_gene, position in zip(cell_genes, positions)]
-
-    organisms.append(Organism(world, CellularBody(cells), (0.5, 0.5)))
-
-    cell_genes = [
-        CellGene("000" + "100" + "100" + "11"),
-        CellGene("011" + "100" + "100" + "10"),
-    ]
-    positions = [(0, 0, 0), (1, 0, -1)]
-    cells = [CellBuilder(cell_gene, position).cell()
-             for cell_gene, position in zip(cell_genes, positions)]
-
-    organisms.append(Organism(world, CellularBody(cells), (5, 5)))
-
-    return organisms
 
     # This code is unreachable due to the return above - removing it
     while remaining_organisms > 0:
