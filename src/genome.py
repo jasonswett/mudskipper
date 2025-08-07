@@ -58,7 +58,7 @@ class Genome:
         return Genome.from_string(offspring_genome_string, cell_count)
 
     @staticmethod
-    def mutate(genome_string, mutation_rate=0.01):
+    def mutate(genome_string, mutation_rate):
         """Apply mutations to a genome string by flipping bits at the given rate."""
         import random
 

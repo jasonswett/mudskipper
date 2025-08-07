@@ -34,6 +34,9 @@ GRID_SIZE = 3  # 3x3 grid
 SCREEN_WIDTH = 50
 SCREEN_HEIGHT = 35
 
+STARTING_FOOD_COUNT = 200
+MUTATION_RATE = 0.05
+
 def generate_organisms(world, world_width, world_height, display):
     organisms = []
     remaining_organisms = ORGANISM_COUNT
@@ -65,8 +68,8 @@ def generate_offspring(parent_a_genome, parent_b_genome, world, world_width, wor
         # Splice parent genomes
         spliced_genome_string = Genome.splice(parent_a_genome, parent_b_genome, 2).value()
 
-        # Apply mutations (1% bit flip rate)
-        mutated_genome_string = Genome.mutate(spliced_genome_string, mutation_rate=0.01)
+        # Apply mutations
+        mutated_genome_string = Genome.mutate(spliced_genome_string, mutation_rate=MUTATION_RATE)
 
         # Create offspring genome from mutated string
         offspring_genome = Genome.from_string(mutated_genome_string, 2)
@@ -85,8 +88,6 @@ def create_food_morsels(world, world_width, world_height, count=200):
         food_morsel = FoodMorsel(world, (x, y))
         food_morsels.append(food_morsel)
     return food_morsels
-
-STARTING_FOOD_COUNT = 200
 
 def create_walls(world, world_width, world_height):
     thickness = 1.0
