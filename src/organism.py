@@ -3,7 +3,7 @@ import math
 
 class Organism:
     MINIMUM_STIMULATION_COUNT = 10
-    MINIMUM_REPRODUCTION_HEALTH = 500
+    MINIMUM_REPRODUCTION_HEALTH = 200
 
     def __init__(self, world, cellular_body, position):
         body_def = Box2D.b2BodyDef()

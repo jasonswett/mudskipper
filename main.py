@@ -4,6 +4,8 @@ import math
 import random
 import time
 
+MAXIMUM_POPULATION = 500
+
 from src.genome import Genome
 from src.cell import Cell
 from src.cellular_body_builder import CellularBodyBuilder
@@ -35,8 +37,8 @@ GRID_SIZE = 3  # 3x3 grid
 SCREEN_WIDTH = 50
 SCREEN_HEIGHT = 35
 
-STARTING_FOOD_COUNT = 400
-MUTATION_RATE = 0.01
+STARTING_FOOD_COUNT = 800
+MUTATION_RATE = 0.02
 
 def generate_organisms(world, world_width, world_height, display):
     organisms = []
@@ -196,7 +198,7 @@ def main():
                 organism_b = contact_event['organism_b']
                 position = contact_event['position']
 
-                while organism_a.can_reproduce() and organism_b.can_reproduce():
+                while organism_a.can_reproduce() and organism_b.can_reproduce() and len(organisms) < MAXIMUM_POPULATION:
                     organism_a.subtract_reproduction_cost()
                     organism_b.subtract_reproduction_cost()
 
