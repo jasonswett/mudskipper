@@ -90,6 +90,13 @@ def create_walls(world, world_width, world_height):
     )
 
 
+def reset_world(world, world_width, world_height, display):
+    organisms = draw_organisms(world, world_width, world_height, display)
+    food_morsels = create_food_morsels(world, world_width, world_height)
+    contact_listener = ContactListener(organisms, food_morsels)
+    world.contactListener = contact_listener
+    return organisms, food_morsels, contact_listener
+
 def main():
     pygame.init()
     # World size (physics simulation area)
@@ -102,10 +109,8 @@ def main():
     clock = pygame.time.Clock()
     font = pygame.font.Font(None, 24)
     world = Box2D.b2World(gravity=(0, 0))
-    organisms = draw_organisms(world, world_width, world_height, display)
-    food_morsels = create_food_morsels(world, world_width, world_height)
-    contact_listener = ContactListener(organisms, food_morsels)
-    world.contactListener = contact_listener
+
+    organisms, food_morsels, contact_listener = reset_world(world, world_width, world_height, display)
     frame_count = 0
 
     # Create camera to view the 3x3 grid
@@ -123,10 +128,7 @@ def main():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     organisms.clear()
-                    organisms = draw_organisms(world, world_width, world_height, display)
-                    food_morsels = create_food_morsels(world, world_width, world_height)
-                    contact_listener = ContactListener(organisms, food_morsels)
-                    world.contactListener = contact_listener
+                    organisms, food_morsels, contact_listener = reset_world(world, world_width, world_height, display)
 
         frame_count += 1
         if frame_count % 60 == 0:
