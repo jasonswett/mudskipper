@@ -51,5 +51,10 @@ class Organism:
         return any(cell.is_alive() for cell in self.cells())
 
     def genome(self):
-        """Get concatenated genome string from all cells' genes."""
         return "".join(cell.gene.value for cell in self.cells())
+
+    def stimulation_count(self):
+        return sum(cell.stimulation_count for cell in self.cells())
+
+    def can_reproduce(self):
+        return self.stimulation_count() >= 10

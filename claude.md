@@ -1,6 +1,8 @@
 Base hexagon reckoning on https://www.redblobgames.com/grids/hexagons/
 I use a flat-side-up orientation.
 
+Don't ever call it a simulation. It's not a simulation. It's a virtual world with virtual life forms.
+
 ## Architecture
 
 This project uses pyenv. Remember to do source venv/bin/activate.

@@ -34,24 +34,30 @@ GRID_SIZE = 3  # 3x3 grid
 SCREEN_WIDTH = 50
 SCREEN_HEIGHT = 35
 
-def draw_organisms(world, world_width, world_height, display):
+def generate_organisms(world, world_width, world_height, display):
     organisms = []
     remaining_organisms = ORGANISM_COUNT
 
     # This code is unreachable due to the return above - removing it
     while remaining_organisms > 0:
+        organisms.append(generate_organism(world, world_width, world_height, display))
+        remaining_organisms -= 1
+
+    return organisms
+
+def generate_organism(world, world_width, world_height, display):
+    # Keep trying until we get a legal cellular body
+    while True:
         genome = Genome(2)
         cellular_body_builder = CellularBodyBuilder(genome.cell_genes())
         cellular_body = cellular_body_builder.cellular_body()
+
         if cellular_body.is_legal():
             print(genome.value())
             # Generate random position within world bounds
             x = random.uniform(0, world_width)
             y = random.uniform(0, world_height)
-            organisms.append(Organism(world, cellular_body, (x, y)))
-            remaining_organisms -= 1
-
-    return organisms
+            return Organism(world, cellular_body, (x, y))
 
 def create_food_morsels(world, world_width, world_height, count=200):
     food_morsels = []
@@ -91,7 +97,7 @@ def create_walls(world, world_width, world_height):
 
 
 def reset_world(world, world_width, world_height, display):
-    organisms = draw_organisms(world, world_width, world_height, display)
+    organisms = generate_organisms(world, world_width, world_height, display)
     food_morsels = create_food_morsels(world, world_width, world_height)
     contact_listener = ContactListener(organisms, food_morsels)
     world.contactListener = contact_listener
@@ -120,6 +126,8 @@ def main():
     camera.x = 0
     camera.y = 0
 
+    contact_events = []
+
     running = True
     while running:
         for event in pygame.event.get():
@@ -132,7 +140,27 @@ def main():
 
         frame_count += 1
         if frame_count % 60 == 0:
+            print("-----------------------")
             print(f"tick: {frame_count}")
+
+            # Get contact events from contact listener
+            contact_events = contact_listener.get_contact_events()
+
+            # Process each contact event
+            for contact_event in contact_events:
+                organism_a = contact_event['organism_a']
+                organism_b = contact_event['organism_b']
+                position = contact_event['position']
+
+                print(f"Contact: {organism_a.genome()} + {organism_b.genome()}")
+
+                if organism_a.can_reproduce() and organism_b.can_reproduce():
+                    offspring = generate_organism(world, world_width, world_height, display)
+                    offspring.body.position = position
+                    organisms.append(offspring)
+
+            # Flush contact events
+            contact_events = []
 
         # Continuous camera movement
         keys = pygame.key.get_pressed()
