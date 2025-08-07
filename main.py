@@ -2,6 +2,7 @@ import pygame
 import Box2D
 import math
 import random
+import time
 
 from src.genome import Genome
 from src.cell import Cell
@@ -28,7 +29,7 @@ RED = (255, 0, 0)
 
 WORLD_WIDTH = 40  # meters
 WORLD_HEIGHT = 40  # meters
-ORGANISM_COUNT = (WORLD_WIDTH * WORLD_HEIGHT) // 20
+ORGANISM_COUNT = (WORLD_WIDTH * WORLD_HEIGHT) // 15
 
 GRID_SIZE = 3  # 3x3 grid
 SCREEN_WIDTH = 50
@@ -140,6 +141,11 @@ def main():
     organisms, food_morsels, contact_listener = reset_world(world, world_width, world_height, display)
     frame_count = 0
     run_number = 1
+    run_start_time = time.time()
+
+    # Records for longest run
+    longest_run_duration = 0
+    longest_run_number = 0
 
     # Create camera to view the 3x3 grid
     # Camera world size is the full 3x3 grid, viewport is the screen size
@@ -163,8 +169,18 @@ def main():
                 running = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    print(f"Run #{run_number} manually restarted")
+                    # Calculate run duration
+                    run_duration = time.time() - run_start_time
+                    print(f"Run #{run_number} manually restarted after {run_duration:.1f} seconds")
+
+                    # Check if this was the longest run
+                    if run_duration > longest_run_duration:
+                        longest_run_duration = run_duration
+                        longest_run_number = run_number
+                        print(f"New longest run record: {run_duration:.1f}s (Run #{run_number})")
+
                     run_number += 1
+                    run_start_time = time.time()
                     organisms.clear()
                     organisms, food_morsels, contact_listener = reset_world(world, world_width, world_height, display)
                     population_count = len(organisms)
@@ -219,8 +235,18 @@ def main():
 
         # Check if population is too low - restart if so
         if len(organisms) < 2:
-            print(f"Run #{run_number} ended - population fell to {len(organisms)}")
+            # Calculate run duration
+            run_duration = time.time() - run_start_time
+            print(f"Run #{run_number} ended - population fell to {len(organisms)} after {run_duration:.1f} seconds")
+
+            # Check if this was the longest run
+            if run_duration > longest_run_duration:
+                longest_run_duration = run_duration
+                longest_run_number = run_number
+                print(f"New longest run record: {run_duration:.1f}s (Run #{run_number})")
+
             run_number += 1
+            run_start_time = time.time()
             print(f"Starting Run #{run_number}")
 
             # Clear existing organisms and food from physics world
@@ -237,6 +263,8 @@ def main():
             contact_events = []
 
             print(f"Run #{run_number} started with {len(organisms)} organisms")
+            if longest_run_duration > 0:
+                print(f"Longest run so far: {longest_run_duration:.1f}s (Run #{longest_run_number})")
 
         # Continuous camera movement
         keys = pygame.key.get_pressed()
@@ -398,7 +426,7 @@ def main():
         for food_morsel in food_morsels_to_remove:
             food_morsels.remove(food_morsel)
 
-        # Display population, food counts, and run number
+        # Display population, food counts, run number, and timer
         population_text = f"Population: {population_count}"
         population_surface = font.render(population_text, False, WHITE)
         display.blit(population_surface, (10, 10))
@@ -410,6 +438,18 @@ def main():
         run_text = f"Run: {run_number}"
         run_surface = font.render(run_text, False, WHITE)
         display.blit(run_surface, (10, 60))
+
+        # Current run timer
+        current_run_time = time.time() - run_start_time
+        timer_text = f"Time: {current_run_time:.1f}s"
+        timer_surface = font.render(timer_text, False, WHITE)
+        display.blit(timer_surface, (10, 85))
+
+        # Longest run record
+        if longest_run_duration > 0:
+            record_text = f"Record: {longest_run_duration:.1f}s (Run #{longest_run_number})"
+            record_surface = font.render(record_text, False, WHITE)
+            display.blit(record_surface, (10, 110))
 
         pygame.display.flip()
         clock.tick(60)
