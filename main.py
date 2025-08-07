@@ -254,6 +254,12 @@ def main():
                 # All tiles get dark gray borders
                 pygame.draw.rect(display, DARK_GRAY, world_rect, 1)
 
+        # Calculate visible world bounds for culling
+        visible_left = camera.x
+        visible_right = camera.x + screen.width
+        visible_top = camera.y
+        visible_bottom = camera.y + screen.height
+
         # Draw organisms in all visible tiles
         for grid_x in range(tiles_to_draw_x):
             for grid_y in range(tiles_to_draw_y):
@@ -261,41 +267,55 @@ def main():
                 offset_x = (base_tile_x + grid_x) * world_width
                 offset_y = (base_tile_y + grid_y) * world_height
 
-                # Draw all organisms in this grid cell
+                # Only draw organisms that are potentially visible in this tile
                 for organism in organisms:
-                    if organism.is_alive():
-                        organism_rendering = OrganismRendering(organism, screen, camera)
+                    if not organism.is_alive():
+                        continue
 
-                        # Draw organism at offset position for this grid cell
-                        cell_renderings = organism_rendering._cell_renderings_with_offset(offset_x, offset_y)
-                        for cell_rendering in cell_renderings:
-                            pygame.draw.polygon(display, cell_rendering['fill_color'], cell_rendering['vertices'])
-                            pygame.draw.polygon(display, cell_rendering['border_color'], cell_rendering['vertices'], width=2)
+                    # Get organism position
+                    org_x, org_y = organism.body.position
 
-                        # Draw ghost organisms for this grid cell
-                        ghost_renderings = organism_rendering.ghost_rendering_with_grid_offset(world_width, world_height, offset_x, offset_y)
-                        for ghost_rendering in ghost_renderings:
-                            pygame.draw.polygon(display, ghost_rendering['fill_color'], ghost_rendering['vertices'])
-                            pygame.draw.polygon(display, ghost_rendering['border_color'], ghost_rendering['vertices'], width=2)
+                    # Check if organism (with offset) is within visible bounds
+                    # Add small buffer for organism size
+                    buffer = 2.0
+                    if (org_x + offset_x < visible_left - buffer or
+                        org_x + offset_x > visible_right + buffer or
+                        org_y + offset_y < visible_top - buffer or
+                        org_y + offset_y > visible_bottom + buffer):
+                        continue  # Skip this organism - it's not visible
 
-                        # Draw yellow bounding rectangle only in the main world
-                        tile_x = base_tile_x + grid_x
-                        tile_y = base_tile_y + grid_y
-                        if tile_x == 0 and tile_y == 0:
-                            pixel_x1, pixel_y1, pixel_x2, pixel_y2 = organism_rendering.bounding_rectangle_pixels()
-                            pixel_x1 += Screen.to_pixels(offset_x)
-                            pixel_y1 += Screen.to_pixels(offset_y)
-                            pixel_x2 += Screen.to_pixels(offset_x)
-                            pixel_y2 += Screen.to_pixels(offset_y)
-                            bounding_rect = pygame.Rect(
-                                pixel_x1,
-                                pixel_y1,
-                                pixel_x2 - pixel_x1,
-                                pixel_y2 - pixel_y1
-                            )
-                            # Use red bounding rectangle if organism is touching another organism
-                            rect_color = RED if contact_listener.is_organism_touching(organism) else YELLOW
-                            pygame.draw.rect(display, rect_color, bounding_rect, 2)
+                    organism_rendering = OrganismRendering(organism, screen, camera)
+
+                    # Draw organism at offset position for this grid cell
+                    cell_renderings = organism_rendering._cell_renderings_with_offset(offset_x, offset_y)
+                    for cell_rendering in cell_renderings:
+                        pygame.draw.polygon(display, cell_rendering['fill_color'], cell_rendering['vertices'])
+                        pygame.draw.polygon(display, cell_rendering['border_color'], cell_rendering['vertices'], width=2)
+
+                    # Draw ghost organisms for this grid cell
+                    ghost_renderings = organism_rendering.ghost_rendering_with_grid_offset(world_width, world_height, offset_x, offset_y)
+                    for ghost_rendering in ghost_renderings:
+                        pygame.draw.polygon(display, ghost_rendering['fill_color'], ghost_rendering['vertices'])
+                        pygame.draw.polygon(display, ghost_rendering['border_color'], ghost_rendering['vertices'], width=2)
+
+                    # Draw yellow bounding rectangle only in the main world
+                    tile_x = base_tile_x + grid_x
+                    tile_y = base_tile_y + grid_y
+                    if tile_x == 0 and tile_y == 0:
+                        pixel_x1, pixel_y1, pixel_x2, pixel_y2 = organism_rendering.bounding_rectangle_pixels()
+                        pixel_x1 += Screen.to_pixels(offset_x)
+                        pixel_y1 += Screen.to_pixels(offset_y)
+                        pixel_x2 += Screen.to_pixels(offset_x)
+                        pixel_y2 += Screen.to_pixels(offset_y)
+                        bounding_rect = pygame.Rect(
+                            pixel_x1,
+                            pixel_y1,
+                            pixel_x2 - pixel_x1,
+                            pixel_y2 - pixel_y1
+                        )
+                        # Use red bounding rectangle if organism is touching another organism
+                        rect_color = RED if contact_listener.is_organism_touching(organism) else YELLOW
+                        pygame.draw.rect(display, rect_color, bounding_rect, 2)
 
         # Update organisms and handle toroidal wrapping
         organisms_to_remove = []
