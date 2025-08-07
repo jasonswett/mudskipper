@@ -40,16 +40,25 @@ class Organism:
 
     def update_fixtures(self):
         """Recreate all fixtures based on current cell positions."""
-        # Remove all existing fixtures (collect first to avoid iterator invalidation)
-        fixtures_to_destroy = list(self.body.fixtures)
-        for fixture in fixtures_to_destroy:
-            self.body.DestroyFixture(fixture)
+        try:
+            # Remove all existing fixtures (collect first to avoid iterator invalidation)
+            fixtures_to_destroy = list(self.body.fixtures)
+            for fixture in fixtures_to_destroy:
+                self.body.DestroyFixture(fixture)
 
-        # Create new fixtures based on current cell positions
-        for cell in self.cells():
-            vertices = self.box2d_cell_vertices(cell)
-            hexagon_shape = Box2D.b2PolygonShape(vertices=vertices)
-            self.body.CreateFixture(shape=hexagon_shape, density=1.0)
+            # Create new fixtures based on current cell positions
+            for cell in self.cells():
+                vertices = self.box2d_cell_vertices(cell)
+                hexagon_shape = Box2D.b2PolygonShape(vertices=vertices)
+                self.body.CreateFixture(shape=hexagon_shape, density=1.0)
+        except AssertionError as e:
+            print(f"WARNING: Box2D fixture update failed: {e}")
+            print(f"  Organism health: {self.health()}")
+            print(f"  Living cells: {sum(1 for cell in self.cells() if cell.is_alive())} / {len(self.cells())}")
+            print(f"  Cell positions: {[(cell.q, cell.r, cell.s) for cell in self.cells()]}")
+            print(f"  Fixtures before update: {len(fixtures_to_destroy)}")
+            print(f"  Organism genome: {self.genome()[:20]}...")
+            print("  Organism may not have proper physics.")
 
     def box2d_cell_vertices(self, cell):
         """Calculate vertices for a cell's hexagon in Box2D local coordinates."""
