@@ -79,6 +79,8 @@ def create_food_morsels(world, world_width, world_height, count=200):
         food_morsels.append(food_morsel)
     return food_morsels
 
+STARTING_FOOD_COUNT = 200
+
 def create_walls(world, world_width, world_height):
     thickness = 1.0
 
@@ -109,7 +111,7 @@ def create_walls(world, world_width, world_height):
 
 def reset_world(world, world_width, world_height, display):
     organisms = generate_organisms(world, world_width, world_height, display)
-    food_morsels = create_food_morsels(world, world_width, world_height)
+    food_morsels = create_food_morsels(world, world_width, world_height, STARTING_FOOD_COUNT)
     contact_listener = ContactListener(organisms, food_morsels)
     world.contactListener = contact_listener
     return organisms, food_morsels, contact_listener
@@ -138,6 +140,10 @@ def main():
     camera.y = 0
 
     contact_events = []
+
+    # Display counters (update every 60 frames)
+    population_count = len(organisms)
+    food_count = len(food_morsels)
 
     running = True
     while running:
@@ -178,6 +184,18 @@ def main():
 
             # Flush contact events
             contact_events = []
+
+            # Replenish food to starting level
+            current_food_count = len(food_morsels)
+            food_needed = STARTING_FOOD_COUNT - current_food_count
+            if food_needed > 0:
+                new_food = create_food_morsels(world, world_width, world_height, food_needed)
+                food_morsels.extend(new_food)
+                print(f"Replenished {food_needed} food morsels (total: {len(food_morsels)})")
+
+            # Update display counters
+            population_count = len(organisms)
+            food_count = len(food_morsels)
 
         # Continuous camera movement
         keys = pygame.key.get_pressed()
@@ -319,24 +337,14 @@ def main():
         for food_morsel in food_morsels_to_remove:
             food_morsels.remove(food_morsel)
 
-        # Display debug info
-        organism_text = f"Organisms: {len(organisms)}"
-        organism_surface = font.render(organism_text, False, WHITE)
-        display.blit(organism_surface, (10, 10))
+        # Display population and food counts
+        population_text = f"Population: {population_count}"
+        population_surface = font.render(population_text, False, WHITE)
+        display.blit(population_surface, (10, 10))
 
-        # Camera and tile debug info
-        camera_text = f"Camera: ({camera.x:.1f}, {camera.y:.1f}) | Base tile: ({base_tile_x}, {base_tile_y})"
-        camera_surface = font.render(camera_text, False, WHITE)
-        display.blit(camera_surface, (10, 35))
-
-        # Show which tiles are being drawn
-        tiles_text = f"Drawing tiles: X[{base_tile_x} to {base_tile_x + tiles_to_draw_x - 1}] Y[{base_tile_y} to {base_tile_y + tiles_to_draw_y - 1}]"
-        tiles_surface = font.render(tiles_text, False, WHITE)
-        display.blit(tiles_surface, (10, 85))
-
-        food_text = f"Food: {len(food_morsels)}"
+        food_text = f"Food: {food_count}"
         food_surface = font.render(food_text, False, WHITE)
-        display.blit(food_surface, (10, 60))
+        display.blit(food_surface, (10, 35))
 
         pygame.display.flip()
         clock.tick(60)
