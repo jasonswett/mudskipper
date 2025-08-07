@@ -204,6 +204,9 @@ def main():
             population_count = len(organisms)
             food_count = len(food_morsels)
 
+        # Update food count every frame for responsiveness
+        food_count = len(food_morsels)
+
         # Continuous camera movement
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
