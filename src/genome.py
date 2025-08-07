@@ -56,3 +56,18 @@ class Genome:
         offspring_genome_string = genome_string_a[:splice_point] + genome_string_b[splice_point:]
 
         return Genome.from_string(offspring_genome_string, cell_count)
+
+    @staticmethod
+    def mutate(genome_string, mutation_rate=0.01):
+        """Apply mutations to a genome string by flipping bits at the given rate."""
+        import random
+
+        mutated = []
+        for bit in genome_string:
+            if random.random() < mutation_rate:
+                # Flip the bit
+                mutated.append('0' if bit == '1' else '1')
+            else:
+                mutated.append(bit)
+
+        return ''.join(mutated)

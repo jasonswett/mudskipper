@@ -25,11 +25,11 @@ GRAY = (128, 128, 128)
 DARK_GRAY = (64, 64, 64)
 YELLOW = (255, 255, 0)
 RED = (255, 0, 0)
-ORGANISM_COUNT = 20
 
-# World and display constants
-WORLD_WIDTH = 20  # meters
-WORLD_HEIGHT = 20  # meters
+WORLD_WIDTH = 40  # meters
+WORLD_HEIGHT = 40  # meters
+ORGANISM_COUNT = (WORLD_WIDTH * WORLD_HEIGHT) // 20
+
 GRID_SIZE = 3  # 3x3 grid
 SCREEN_WIDTH = 50
 SCREEN_HEIGHT = 35
@@ -62,7 +62,14 @@ def generate_organism(world, world_width, world_height, display):
 def generate_offspring(parent_a_genome, parent_b_genome, world, world_width, world_height, position):
     # Keep trying until we get a legal cellular body
     while True:
-        offspring_genome = Genome.splice(parent_a_genome, parent_b_genome, 2)
+        # Splice parent genomes
+        spliced_genome_string = Genome.splice(parent_a_genome, parent_b_genome, 2).value()
+
+        # Apply mutations (1% bit flip rate)
+        mutated_genome_string = Genome.mutate(spliced_genome_string, mutation_rate=0.01)
+
+        # Create offspring genome from mutated string
+        offspring_genome = Genome.from_string(mutated_genome_string, 2)
         cellular_body_builder = CellularBodyBuilder(offspring_genome.cell_genes())
         cellular_body = cellular_body_builder.cellular_body()
 

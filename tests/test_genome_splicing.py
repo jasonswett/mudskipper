@@ -76,3 +76,37 @@ class TestGenomeSplicing:
         # Should have some variation in results due to random splice point
         unique_results = set(results)
         assert len(unique_results) >= 1  # At least one result (could be same due to randomness)
+
+    def test_mutate_flips_bits(self):
+        """Test that mutate function flips bits at expected rate."""
+        original = "1111111111111111111111"
+
+        # Run mutation multiple times to test statistical behavior
+        mutation_counts = []
+        for _ in range(100):
+            mutated = Genome.mutate(original, mutation_rate=0.1)  # 10% for easier testing
+            # Count how many bits were flipped
+            flipped = sum(1 for o, m in zip(original, mutated) if o != m)
+            mutation_counts.append(flipped)
+
+        # Average should be around 10% of string length
+        average_mutations = sum(mutation_counts) / len(mutation_counts)
+        expected = len(original) * 0.1
+
+        # Allow some variance (between 50% and 150% of expected)
+        assert expected * 0.5 <= average_mutations <= expected * 1.5
+
+    def test_mutate_preserves_length(self):
+        """Test that mutation preserves genome string length."""
+        original = "1100110011001100"
+        mutated = Genome.mutate(original, mutation_rate=0.5)
+
+        assert len(mutated) == len(original)
+
+    def test_mutate_returns_binary_string(self):
+        """Test that mutation returns valid binary string."""
+        original = "1010101010101010"
+        mutated = Genome.mutate(original, mutation_rate=0.1)
+
+        # All characters should be 0 or 1
+        assert all(c in '01' for c in mutated)
