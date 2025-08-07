@@ -221,7 +221,7 @@ def main():
             population_count = len(organisms)
             food_count = len(food_morsels)
 
-        if frame_count % 600 == 0:
+        if frame_count % (60 * 30) == 0:
             # Replenish food to starting level
             current_food_count = len(food_morsels)
             food_needed = STARTING_FOOD_COUNT - current_food_count
