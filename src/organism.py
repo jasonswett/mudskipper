@@ -2,6 +2,9 @@ import Box2D
 import math
 
 class Organism:
+    MINIMUM_STIMULATION_COUNT = 20
+    MINIMUM_REPRODUCTION_HEALTH = 1000
+
     def __init__(self, world, cellular_body, position):
         body_def = Box2D.b2BodyDef()
         body_def.type = Box2D.b2_dynamicBody
@@ -57,4 +60,14 @@ class Organism:
         return sum(cell.stimulation_count for cell in self.cells())
 
     def can_reproduce(self):
-        return self.stimulation_count() >= 10
+        return self.stimulation_count() >= self.MINIMUM_STIMULATION_COUNT and self.can_afford_reproduction()
+
+    def can_afford_reproduction(self):
+        return self.health() >= self.MINIMUM_REPRODUCTION_HEALTH
+
+    def health(self):
+        return sum(cell.health for cell in self.cells())
+
+    def subtract_reproduction_cost(self):
+        for cell in self.cells():
+            cell.subtract_reproduction_cost()

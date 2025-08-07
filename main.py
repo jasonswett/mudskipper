@@ -59,6 +59,17 @@ def generate_organism(world, world_width, world_height, display):
             y = random.uniform(0, world_height)
             return Organism(world, cellular_body, (x, y))
 
+def generate_offspring(parent_a_genome, parent_b_genome, world, world_width, world_height, position):
+    # Keep trying until we get a legal cellular body
+    while True:
+        offspring_genome = Genome.splice(parent_a_genome, parent_b_genome, 2)
+        cellular_body_builder = CellularBodyBuilder(offspring_genome.cell_genes())
+        cellular_body = cellular_body_builder.cellular_body()
+
+        if cellular_body.is_legal():
+            print(f"Offspring genome: {offspring_genome.value()}")
+            return Organism(world, cellular_body, position)
+
 def create_food_morsels(world, world_width, world_height, count=200):
     food_morsels = []
     for _ in range(count):
@@ -155,8 +166,14 @@ def main():
                 print(f"Contact: {organism_a.genome()} + {organism_b.genome()}")
 
                 if organism_a.can_reproduce() and organism_b.can_reproduce():
-                    offspring = generate_organism(world, world_width, world_height, display)
-                    offspring.body.position = position
+                    organism_a.subtract_reproduction_cost()
+                    organism_b.subtract_reproduction_cost()
+
+                    offspring = generate_offspring(
+                        organism_a.genome(),
+                        organism_b.genome(),
+                        world, world_width, world_height, position
+                    )
                     organisms.append(offspring)
 
             # Flush contact events

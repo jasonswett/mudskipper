@@ -8,6 +8,7 @@ class Cell:
     REFRACTORY_PERIOD = 20
     STARTING_HEALTH = 2000
     FOOD_MORSEL_HEALTH_VALUE = 100
+    REPRODUCTION_COST = 500
 
     def __init__(self, position, radius, border_color, fill_color, movement_deltas):
         self.position = position
@@ -82,3 +83,6 @@ class Cell:
     def nourish(self):
         health_after_eating = self.health + self.FOOD_MORSEL_HEALTH_VALUE
         self.health = min(health_after_eating, self.STARTING_HEALTH)
+
+    def subtract_reproduction_cost(self):
+        self.health -= self.REPRODUCTION_COST
