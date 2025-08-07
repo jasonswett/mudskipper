@@ -138,6 +138,7 @@ def main():
 
     organisms, food_morsels, contact_listener = reset_world(world, world_width, world_height, display)
     frame_count = 0
+    run_number = 1
 
     # Create camera to view the 3x3 grid
     # Camera world size is the full 3x3 grid, viewport is the screen size
@@ -152,6 +153,8 @@ def main():
     population_count = len(organisms)
     food_count = len(food_morsels)
 
+    print(f"Starting Run #{run_number} with {len(organisms)} organisms")
+
     running = True
     while running:
         for event in pygame.event.get():
@@ -159,8 +162,13 @@ def main():
                 running = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
+                    print(f"Run #{run_number} manually restarted")
+                    run_number += 1
                     organisms.clear()
                     organisms, food_morsels, contact_listener = reset_world(world, world_width, world_height, display)
+                    population_count = len(organisms)
+                    food_count = len(food_morsels)
+                    print(f"Run #{run_number} started with {len(organisms)} organisms")
 
         frame_count += 1
         if frame_count % 60 == 0:
@@ -206,6 +214,27 @@ def main():
 
         # Update food count every frame for responsiveness
         food_count = len(food_morsels)
+
+        # Check if population is too low - restart if so
+        if len(organisms) < 2:
+            print(f"Run #{run_number} ended - population fell to {len(organisms)}")
+            run_number += 1
+            print(f"Starting Run #{run_number}")
+
+            # Clear existing organisms and food from physics world
+            for organism in organisms:
+                world.DestroyBody(organism.body)
+            for food_morsel in food_morsels:
+                world.DestroyBody(food_morsel.body)
+
+            # Reset everything
+            organisms, food_morsels, contact_listener = reset_world(world, world_width, world_height, display)
+            frame_count = 0
+            population_count = len(organisms)
+            food_count = len(food_morsels)
+            contact_events = []
+
+            print(f"Run #{run_number} started with {len(organisms)} organisms")
 
         # Continuous camera movement
         keys = pygame.key.get_pressed()
@@ -367,7 +396,7 @@ def main():
         for food_morsel in food_morsels_to_remove:
             food_morsels.remove(food_morsel)
 
-        # Display population and food counts
+        # Display population, food counts, and run number
         population_text = f"Population: {population_count}"
         population_surface = font.render(population_text, False, WHITE)
         display.blit(population_surface, (10, 10))
@@ -375,6 +404,10 @@ def main():
         food_text = f"Food: {food_count}"
         food_surface = font.render(food_text, False, WHITE)
         display.blit(food_surface, (10, 35))
+
+        run_text = f"Run: {run_number}"
+        run_surface = font.render(run_text, False, WHITE)
+        display.blit(run_surface, (10, 60))
 
         pygame.display.flip()
         clock.tick(60)
