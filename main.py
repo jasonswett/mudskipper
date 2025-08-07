@@ -106,6 +106,7 @@ def main():
     food_morsels = create_food_morsels(world, world_width, world_height)
     contact_listener = ContactListener(organisms, food_morsels)
     world.contactListener = contact_listener
+    frame_count = 0
 
     # Create camera to view the 3x3 grid
     # Camera world size is the full 3x3 grid, viewport is the screen size
@@ -126,6 +127,10 @@ def main():
                     food_morsels = create_food_morsels(world, world_width, world_height)
                     contact_listener = ContactListener(organisms, food_morsels)
                     world.contactListener = contact_listener
+
+        frame_count += 1
+        if frame_count % 60 == 0:
+            print(f"tick: {frame_count}")
 
         # Continuous camera movement
         keys = pygame.key.get_pressed()
