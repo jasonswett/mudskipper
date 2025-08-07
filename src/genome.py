@@ -1,34 +1,59 @@
 from src.cell_gene import CellGene
 
 class Genome:
-    def __init__(self, cell_count):
-        self.cell_count = cell_count
+    CELL_COUNT_PREFIX_LENGTH = 2
+
+    def __init__(self, max_cell_count=4):
+        self.max_cell_count = max_cell_count
+        # Start with 2 zeros for cell count prefix
+        self.cell_count_prefix = '0' * self.CELL_COUNT_PREFIX_LENGTH
+
+        # Generate genes for maximum possible cells
         self._cell_genes = []
-        for i in range(self.cell_count):
+        for i in range(self.max_cell_count):
             self._cell_genes.append(CellGene.random())
 
+    def effective_cell_count(self):
+        """Calculate actual number of cells based on prefix sum."""
+        prefix_sum = sum(int(bit) for bit in self.cell_count_prefix)
+        return 2 + prefix_sum
+
     def cell_genes(self):
-        return self._cell_genes
+        """Return only the cell genes that should be active."""
+        effective_count = self.effective_cell_count()
+        return self._cell_genes[:effective_count]
 
     def value(self):
-        return "".join([str(cell_gene.value) for cell_gene in self._cell_genes])
+        """Return full genome string including prefix and all cell genes."""
+        cell_genes_string = "".join([str(cell_gene.value) for cell_gene in self._cell_genes])
+        return self.cell_count_prefix + cell_genes_string
 
     @classmethod
-    def from_string(cls, genome_string, cell_count):
+    def from_string(cls, genome_string, max_cell_count=4):
         """Create a genome from a genome string."""
         genome = cls.__new__(cls)
-        genome.cell_count = cell_count
+        genome.max_cell_count = max_cell_count
+
+        # Extract cell count prefix (first 2 bits)
+        if len(genome_string) >= cls.CELL_COUNT_PREFIX_LENGTH:
+            genome.cell_count_prefix = genome_string[:cls.CELL_COUNT_PREFIX_LENGTH]
+        else:
+            # If genome string is too short, pad with zeros
+            genome.cell_count_prefix = (genome_string + '0' * cls.CELL_COUNT_PREFIX_LENGTH)[:cls.CELL_COUNT_PREFIX_LENGTH]
+
+        # Extract cell genes from remainder of string
+        cell_genes_string = genome_string[cls.CELL_COUNT_PREFIX_LENGTH:]
         genome._cell_genes = []
 
         # Calculate the length of each cell gene
         cell_gene_length = sum(CellGene.GENE_SECTION_LENGTHS.values())
 
         # Extract each cell gene from the string
-        for i in range(cell_count):
+        for i in range(max_cell_count):
             start = i * cell_gene_length
             end = start + cell_gene_length
-            if end <= len(genome_string):
-                cell_gene_string = genome_string[start:end]
+            if end <= len(cell_genes_string):
+                cell_gene_string = cell_genes_string[start:end]
                 cell_gene = CellGene(cell_gene_string)
                 genome._cell_genes.append(cell_gene)
             else:
@@ -38,7 +63,7 @@ class Genome:
         return genome
 
     @staticmethod
-    def splice(genome_string_a, genome_string_b, cell_count):
+    def splice(genome_string_a, genome_string_b, max_cell_count=4):
         """Create offspring genome by splicing two parent genomes at a random point."""
         import random
 
@@ -47,7 +72,7 @@ class Genome:
 
         if min_length == 0:
             # If one genome is empty, use random genome
-            return Genome(cell_count)
+            return Genome(max_cell_count)
 
         # Choose a random splice point
         splice_point = random.randint(0, min_length - 1)
@@ -55,7 +80,7 @@ class Genome:
         # Create offspring genome: first part from parent A, rest from parent B
         offspring_genome_string = genome_string_a[:splice_point] + genome_string_b[splice_point:]
 
-        return Genome.from_string(offspring_genome_string, cell_count)
+        return Genome.from_string(offspring_genome_string, max_cell_count)
 
     @staticmethod
     def mutate(genome_string, mutation_rate):

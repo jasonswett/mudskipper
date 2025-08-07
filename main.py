@@ -38,7 +38,7 @@ SCREEN_WIDTH = 50
 SCREEN_HEIGHT = 35
 
 STARTING_FOOD_COUNT = 800
-MUTATION_RATE = 0.02
+MUTATION_RATE = 0.01
 
 def generate_organisms(world, world_width, world_height, display):
     organisms = []
@@ -54,7 +54,7 @@ def generate_organisms(world, world_width, world_height, display):
 def generate_organism(world, world_width, world_height, display):
     # Keep trying until we get a legal cellular body
     while True:
-        genome = Genome(2)
+        genome = Genome(4)  # Max 4 cells
         cellular_body_builder = CellularBodyBuilder(genome.cell_genes())
         cellular_body = cellular_body_builder.cellular_body()
 
@@ -69,13 +69,13 @@ def generate_offspring(parent_a_genome, parent_b_genome, world, world_width, wor
     # Keep trying until we get a legal cellular body
     while True:
         # Splice parent genomes
-        spliced_genome_string = Genome.splice(parent_a_genome, parent_b_genome, 2).value()
+        spliced_genome_string = Genome.splice(parent_a_genome, parent_b_genome, 4).value()
 
         # Apply mutations
         mutated_genome_string = Genome.mutate(spliced_genome_string, mutation_rate=MUTATION_RATE)
 
         # Create offspring genome from mutated string
-        offspring_genome = Genome.from_string(mutated_genome_string, 2)
+        offspring_genome = Genome.from_string(mutated_genome_string, 4)
         cellular_body_builder = CellularBodyBuilder(offspring_genome.cell_genes())
         cellular_body = cellular_body_builder.cellular_body()
 
@@ -174,6 +174,7 @@ def main():
 
                     # Check if this was the longest run
                     if run_duration > longest_run_duration:
+                        print(f"New longest run record: {run_duration:.1f}s (Run #{run_number})")
                         longest_run_duration = run_duration
                         longest_run_number = run_number
 
