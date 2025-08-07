@@ -160,8 +160,6 @@ def main():
     population_count = len(organisms)
     food_count = len(food_morsels)
 
-    print(f"Starting Run #{run_number} with {len(organisms)} organisms")
-
     running = True
     while running:
         for event in pygame.event.get():
@@ -171,13 +169,11 @@ def main():
                 if event.key == pygame.K_SPACE:
                     # Calculate run duration
                     run_duration = time.time() - run_start_time
-                    print(f"Run #{run_number} manually restarted after {run_duration:.1f} seconds")
 
                     # Check if this was the longest run
                     if run_duration > longest_run_duration:
                         longest_run_duration = run_duration
                         longest_run_number = run_number
-                        print(f"New longest run record: {run_duration:.1f}s (Run #{run_number})")
 
                     run_number += 1
                     run_start_time = time.time()
@@ -185,7 +181,6 @@ def main():
                     organisms, food_morsels, contact_listener = reset_world(world, world_width, world_height, display)
                     population_count = len(organisms)
                     food_count = len(food_morsels)
-                    print(f"Run #{run_number} started with {len(organisms)} organisms")
 
         frame_count += 1
         if frame_count % 60 == 0:
@@ -201,9 +196,7 @@ def main():
                 organism_b = contact_event['organism_b']
                 position = contact_event['position']
 
-                print(f"Contact: {organism_a.genome()} + {organism_b.genome()}")
-
-                if organism_a.can_reproduce() and organism_b.can_reproduce():
+                while organism_a.can_reproduce() and organism_b.can_reproduce():
                     organism_a.subtract_reproduction_cost()
                     organism_b.subtract_reproduction_cost()
 
