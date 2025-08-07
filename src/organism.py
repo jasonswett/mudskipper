@@ -11,18 +11,31 @@ class Organism:
         body_def.position = position
         self.body = world.CreateBody(body_def)
         self.cellular_body = cellular_body
+        self.fixtures_need_update = False  # Track if fixtures need recreation
+        self._last_cell_positions = None  # Cache to detect movement
 
         for cell in self.cells():
             vertices = self.box2d_cell_vertices(cell)
             hexagon_shape = Box2D.b2PolygonShape(vertices=vertices)
             self.body.CreateFixture(shape=hexagon_shape, density=1.0)
 
+        # Store initial positions
+        self._update_position_cache()
+
     def cells(self):
         return self.cellular_body.cells
 
     def update_clock(self):
         self.cellular_body.update_clock()
-        self.update_fixtures()
+
+        # Check if any cell positions have changed
+        if self._have_cells_moved():
+            self.fixtures_need_update = True
+
+        # Only update fixtures if they actually need updating
+        if self.fixtures_need_update:
+            self.update_fixtures()
+            self.fixtures_need_update = False
 
     def update_fixtures(self):
         """Recreate all fixtures based on current cell positions."""
@@ -88,3 +101,20 @@ class Organism:
         b = ((checksum >> 16) % 200) + 55
 
         return (r, g, b)
+
+    def _update_position_cache(self):
+        """Cache current cell positions for movement detection."""
+        self._last_cell_positions = [(cell.q, cell.r, cell.s) for cell in self.cells()]
+
+    def _have_cells_moved(self):
+        """Check if any cells have moved since last update."""
+        if self._last_cell_positions is None:
+            return True
+
+        current_positions = [(cell.q, cell.r, cell.s) for cell in self.cells()]
+
+        if current_positions != self._last_cell_positions:
+            self._update_position_cache()  # Update cache with new positions
+            return True
+
+        return False

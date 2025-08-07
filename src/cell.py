@@ -7,9 +7,9 @@ class Cell:
     DEATH_COLOR = (128, 128, 128)
     REFRACTORY_PERIOD = 20
     STARTING_HEALTH = 1000
-    MAX_HEALTH = 2000
-    FOOD_MORSEL_HEALTH_VALUE = 100
-    REPRODUCTION_COST = 200
+    MAX_HEALTH = 5000
+    FOOD_MORSEL_HEALTH_VALUE = 500
+    REPRODUCTION_COST = 100
 
     def __init__(self, position, radius, border_color, fill_color, movement_deltas):
         self.position = position
@@ -73,6 +73,7 @@ class Cell:
         dq, dr, ds = delta
         self.position = (q + dq, r + dr, s + ds)
         self.q, self.r, self.s = self.position
+        # Note: Position change will be detected by organism's _have_cells_moved() check
 
     def die(self):
         self.fill_color = self.DEATH_COLOR
