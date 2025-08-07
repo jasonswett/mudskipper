@@ -20,19 +20,19 @@ class Organism:
     def update_clock(self):
         self.cellular_body.update_clock()
         self.update_fixtures()
-    
+
     def update_fixtures(self):
         """Recreate all fixtures based on current cell positions."""
         # Remove all existing fixtures
         for fixture in self.body.fixtures:
             self.body.DestroyFixture(fixture)
-        
+
         # Create new fixtures based on current cell positions
         for cell in self.cells():
             vertices = self.box2d_cell_vertices(cell)
             hexagon_shape = Box2D.b2PolygonShape(vertices=vertices)
             self.body.CreateFixture(shape=hexagon_shape, density=1.0)
-    
+
     def box2d_cell_vertices(self, cell):
         """Calculate vertices for a cell's hexagon in Box2D local coordinates."""
         vertices = []
@@ -49,3 +49,7 @@ class Organism:
 
     def is_alive(self):
         return any(cell.is_alive() for cell in self.cells())
+
+    def genome(self):
+        """Get concatenated genome string from all cells' genes."""
+        return "".join(cell.gene.value for cell in self.cells())

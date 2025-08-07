@@ -8,7 +8,7 @@ class CellBuilder:
         self.position = position
 
     def cell(self):
-        return CellFactory.create(
+        cell = CellFactory.create(
             self.cell_gene.cell_type(),
             self.position,
             self.DEFAULT_RADIUS,
@@ -16,3 +16,5 @@ class CellBuilder:
             self.cell_gene.fill_color(),
             self.cell_gene.movement_deltas()
         )
+        cell.gene = self.cell_gene
+        return cell
