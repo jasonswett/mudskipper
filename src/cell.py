@@ -8,7 +8,7 @@ class Cell:
     REFRACTORY_PERIOD = 20
     STARTING_HEALTH = 2000
     FOOD_MORSEL_HEALTH_VALUE = 100
-    REPRODUCTION_COST = 200
+    REPRODUCTION_COST = 500
 
     def __init__(self, position, radius, border_color, fill_color, movement_deltas):
         self.position = position

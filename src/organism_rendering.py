@@ -32,7 +32,7 @@ class OrganismRendering:
                 cell = self.organism.cells()[i]
                 cell_renderings.append({
                     'vertices': screen_vertices,
-                    'border_color': cell.border_color,
+                    'border_color': self.organism.genome_color(),
                     'fill_color': cell.fill_color
                 })
         return cell_renderings

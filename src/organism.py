@@ -3,7 +3,7 @@ import math
 
 class Organism:
     MINIMUM_STIMULATION_COUNT = 20
-    MINIMUM_REPRODUCTION_HEALTH = 500
+    MINIMUM_REPRODUCTION_HEALTH = 1000
 
     def __init__(self, world, cellular_body, position):
         body_def = Box2D.b2BodyDef()
@@ -71,3 +71,20 @@ class Organism:
     def subtract_reproduction_cost(self):
         for cell in self.cells():
             cell.subtract_reproduction_cost()
+
+    def genome_color(self):
+        """Get a color based on the genome checksum for visual identification."""
+        genome_string = self.genome()
+
+        # Create a simple checksum from the genome string
+        checksum = 0
+        for i, char in enumerate(genome_string):
+            checksum += ord(char) * (i + 1)
+
+        # Convert checksum to RGB values
+        # Use modulo to keep values in 0-255 range, with some offset for visibility
+        r = (checksum % 200) + 55  # 55-254 range
+        g = ((checksum >> 8) % 200) + 55
+        b = ((checksum >> 16) % 200) + 55
+
+        return (r, g, b)
