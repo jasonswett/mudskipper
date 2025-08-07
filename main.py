@@ -36,7 +36,7 @@ SCREEN_WIDTH = 50
 SCREEN_HEIGHT = 35
 
 STARTING_FOOD_COUNT = 200
-MUTATION_RATE = 0.05
+MUTATION_RATE = 0.01
 
 def generate_organisms(world, world_width, world_height, display):
     organisms = []
