@@ -10,7 +10,8 @@ class TestGenomeSplicing:
         parent_b = "0110000010001110101110"
 
         # Create offspring through splicing
-        offspring_genome = Genome.splice(parent_a, parent_b, 2)
+        offspring_string = Genome.splice(parent_a, parent_b, 2)
+        offspring_genome = Genome.from_string(offspring_string, 2)
 
         # Offspring should be a valid Genome object
         assert isinstance(offspring_genome, Genome)
@@ -18,7 +19,6 @@ class TestGenomeSplicing:
         assert len(offspring_genome.cell_genes()) == 2
 
         # Offspring genome string should contain parts from both parents
-        offspring_string = offspring_genome.value()
         assert isinstance(offspring_string, str)
         assert len(offspring_string) > 0
 
@@ -31,7 +31,8 @@ class TestGenomeSplicing:
         parent_a = "11001011"
         parent_b = "0110000010001110101110"
 
-        offspring_genome = Genome.splice(parent_a, parent_b, 2)
+        offspring_string = Genome.splice(parent_a, parent_b, 2)
+        offspring_genome = Genome.from_string(offspring_string, 2)
 
         assert isinstance(offspring_genome, Genome)
         assert offspring_genome.max_cell_count == 2
@@ -41,7 +42,8 @@ class TestGenomeSplicing:
         parent_a = ""
         parent_b = "0110000010001110101110"
 
-        offspring_genome = Genome.splice(parent_a, parent_b, 2)
+        offspring_string = Genome.splice(parent_a, parent_b, 2)
+        offspring_genome = Genome.from_string(offspring_string, 2)
 
         # Should create a random genome when one parent is empty
         assert isinstance(offspring_genome, Genome)
@@ -70,8 +72,8 @@ class TestGenomeSplicing:
         # Run splice multiple times and collect results
         results = []
         for _ in range(10):
-            offspring = Genome.splice(parent_a, parent_b, 2)
-            results.append(offspring.value())
+            offspring_string = Genome.splice(parent_a, parent_b, 2)
+            results.append(offspring_string)
 
         # Should have some variation in results due to random splice point
         unique_results = set(results)

@@ -5,12 +5,13 @@ class Organism:
     MINIMUM_STIMULATION_COUNT = 10
     MINIMUM_REPRODUCTION_HEALTH = 200
 
-    def __init__(self, world, cellular_body, position):
+    def __init__(self, world, cellular_body, position, genome=None):
         body_def = Box2D.b2BodyDef()
         body_def.type = Box2D.b2_dynamicBody
         body_def.position = position
         self.body = world.CreateBody(body_def)
         self.cellular_body = cellular_body
+        self._genome = genome
         self.fixtures_need_update = False  # Track if fixtures need recreation
         self._last_cell_positions = None  # Cache to detect movement
 
@@ -39,8 +40,9 @@ class Organism:
 
     def update_fixtures(self):
         """Recreate all fixtures based on current cell positions."""
-        # Remove all existing fixtures
-        for fixture in self.body.fixtures:
+        # Remove all existing fixtures (collect first to avoid iterator invalidation)
+        fixtures_to_destroy = list(self.body.fixtures)
+        for fixture in fixtures_to_destroy:
             self.body.DestroyFixture(fixture)
 
         # Create new fixtures based on current cell positions
@@ -67,7 +69,11 @@ class Organism:
         return any(cell.is_alive() for cell in self.cells())
 
     def genome(self):
-        return "".join(cell.gene.value for cell in self.cells())
+        if self._genome:
+            return self._genome.value()
+        else:
+            # Fallback to old method if no genome stored
+            return "".join(cell.gene.value for cell in self.cells())
 
     def stimulation_count(self):
         return sum(cell.stimulation_count for cell in self.cells())

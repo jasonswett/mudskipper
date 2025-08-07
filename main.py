@@ -63,13 +63,13 @@ def generate_organism(world, world_width, world_height, display):
             # Generate random position within world bounds
             x = random.uniform(0, world_width)
             y = random.uniform(0, world_height)
-            return Organism(world, cellular_body, (x, y))
+            return Organism(world, cellular_body, (x, y), genome)
 
 def generate_offspring(parent_a_genome, parent_b_genome, world, world_width, world_height, position):
     # Keep trying until we get a legal cellular body
     while True:
         # Splice parent genomes
-        spliced_genome_string = Genome.splice(parent_a_genome, parent_b_genome, 4).value()
+        spliced_genome_string = Genome.splice(parent_a_genome, parent_b_genome, 4)
 
         # Apply mutations
         mutated_genome_string = Genome.mutate(spliced_genome_string, mutation_rate=MUTATION_RATE)
@@ -81,7 +81,7 @@ def generate_offspring(parent_a_genome, parent_b_genome, world, world_width, wor
 
         if cellular_body.is_legal():
             print(f"Offspring genome: {offspring_genome.value()}")
-            return Organism(world, cellular_body, position)
+            return Organism(world, cellular_body, position, offspring_genome)
 
 def create_food_morsels(world, world_width, world_height, count=200):
     food_morsels = []

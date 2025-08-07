@@ -1,11 +1,11 @@
 from src.cell_gene import CellGene
 
 class Genome:
-    CELL_COUNT_PREFIX_LENGTH = 2
+    CELL_COUNT_PREFIX_LENGTH = 4
 
     def __init__(self, max_cell_count=4):
         self.max_cell_count = max_cell_count
-        # Start with 2 zeros for cell count prefix
+        # Start with 4 zeros for cell count prefix
         self.cell_count_prefix = '0' * self.CELL_COUNT_PREFIX_LENGTH
 
         # Generate genes for maximum possible cells
@@ -16,7 +16,7 @@ class Genome:
     def effective_cell_count(self):
         """Calculate actual number of cells based on prefix sum."""
         prefix_sum = sum(int(bit) for bit in self.cell_count_prefix)
-        return 2 + prefix_sum
+        return 2 + min(prefix_sum, 2)  # Cap at max 4 cells (2 + 2)
 
     def cell_genes(self):
         """Return only the cell genes that should be active."""
@@ -34,7 +34,7 @@ class Genome:
         genome = cls.__new__(cls)
         genome.max_cell_count = max_cell_count
 
-        # Extract cell count prefix (first 2 bits)
+        # Extract cell count prefix (first 4 bits)
         if len(genome_string) >= cls.CELL_COUNT_PREFIX_LENGTH:
             genome.cell_count_prefix = genome_string[:cls.CELL_COUNT_PREFIX_LENGTH]
         else:
@@ -71,8 +71,8 @@ class Genome:
         min_length = min(len(genome_string_a), len(genome_string_b))
 
         if min_length == 0:
-            # If one genome is empty, use random genome
-            return Genome(max_cell_count)
+            # If one genome is empty, return a basic genome string
+            return '0000' + '0' * (max_cell_count * sum(CellGene.GENE_SECTION_LENGTHS.values()))
 
         # Choose a random splice point
         splice_point = random.randint(0, min_length - 1)
@@ -80,7 +80,7 @@ class Genome:
         # Create offspring genome: first part from parent A, rest from parent B
         offspring_genome_string = genome_string_a[:splice_point] + genome_string_b[splice_point:]
 
-        return Genome.from_string(offspring_genome_string, max_cell_count)
+        return offspring_genome_string
 
     @staticmethod
     def mutate(genome_string, mutation_rate):
