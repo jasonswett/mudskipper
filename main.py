@@ -323,6 +323,17 @@ def main():
                 offset_x = (base_tile_x + grid_x) * world_width
                 offset_y = (base_tile_y + grid_y) * world_height
 
+                # Check if this tile is visible at all
+                tile_left = offset_x
+                tile_right = offset_x + world_width
+                tile_top = offset_y
+                tile_bottom = offset_y + world_height
+
+                # If tile is completely outside camera view, skip it
+                if (tile_right < camera.x or tile_left > camera.x + screen.width or
+                    tile_bottom < camera.y or tile_top > camera.y + screen.height):
+                    continue
+
                 # Draw all organisms in this grid cell
                 for organism in organisms:
                     if organism.is_alive():
