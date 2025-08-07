@@ -351,24 +351,6 @@ def main():
                             pygame.draw.polygon(display, ghost_rendering['fill_color'], ghost_rendering['vertices'])
                             pygame.draw.polygon(display, ghost_rendering['border_color'], ghost_rendering['vertices'], width=2)
 
-                        # Draw yellow bounding rectangle only in the main world
-                        tile_x = base_tile_x + grid_x
-                        tile_y = base_tile_y + grid_y
-                        if tile_x == 0 and tile_y == 0:
-                            pixel_x1, pixel_y1, pixel_x2, pixel_y2 = organism_rendering.bounding_rectangle_pixels()
-                            pixel_x1 += Screen.to_pixels(offset_x)
-                            pixel_y1 += Screen.to_pixels(offset_y)
-                            pixel_x2 += Screen.to_pixels(offset_x)
-                            pixel_y2 += Screen.to_pixels(offset_y)
-                            bounding_rect = pygame.Rect(
-                                pixel_x1,
-                                pixel_y1,
-                                pixel_x2 - pixel_x1,
-                                pixel_y2 - pixel_y1
-                            )
-                            # Use red bounding rectangle if organism is touching another organism
-                            rect_color = RED if contact_listener.is_organism_touching(organism) else YELLOW
-                            pygame.draw.rect(display, rect_color, bounding_rect, 2)
 
         # Update organisms and handle toroidal wrapping
         organisms_to_remove = []
