@@ -235,14 +235,13 @@ def main():
             population_count = len(organisms)
             food_count = len(food_morsels)
 
-        if frame_count % (60 * 30) == 0:
-            # Replenish food to starting level
-            current_food_count = len(food_morsels)
+        # Replenish food when only 20% remains
+        current_food_count = len(food_morsels)
+        if current_food_count <= STARTING_FOOD_COUNT * 0.5:
             food_needed = STARTING_FOOD_COUNT - current_food_count
-            if food_needed > 0:
-                new_food = create_food_morsels(world, world_width, world_height, food_needed)
-                food_morsels.extend(new_food)
-                print(f"Replenished {food_needed} food morsels (total: {len(food_morsels)})")
+            new_food = create_food_morsels(world, world_width, world_height, food_needed)
+            food_morsels.extend(new_food)
+            print(f"Replenished {food_needed} food morsels (total: {len(food_morsels)})")
 
         # Update food count every frame for responsiveness
         food_count = len(food_morsels)
