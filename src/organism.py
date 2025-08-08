@@ -2,7 +2,7 @@ import Box2D
 import math
 
 class Organism:
-    MINIMUM_STIMULATION_COUNT = 10
+    MINIMUM_STIMULATION_COUNT = 40
     MINIMUM_REPRODUCTION_HEALTH = 200
 
     def __init__(self, world, cellular_body, position, genome=None):
@@ -57,6 +57,16 @@ class Organism:
             print(f"  Living cells: {sum(1 for cell in self.cells() if cell.is_alive())} / {len(self.cells())}")
             print(f"  Cell positions: {[(cell.q, cell.r, cell.s) for cell in self.cells()]}")
             print(f"  Fixtures before update: {len(fixtures_to_destroy)}")
+            print(f"  Organism Box2D position: ({self.body.position.x:.1f}, {self.body.position.y:.1f})")
+
+            # Convert hex positions to world coordinates
+            world_positions = []
+            for cell in self.cells():
+                world_x = (3/2 * cell.q) * cell.radius
+                world_y = (math.sqrt(3)/2 * cell.q + math.sqrt(3) * cell.r) * cell.radius
+                world_positions.append((world_x, world_y))
+            print(f"  Cell world coordinates: {world_positions}")
+
             print(f"  Organism genome: {self.genome()[:20]}...")
             print("  Organism may not have proper physics.")
 

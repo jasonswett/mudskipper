@@ -36,7 +36,9 @@ GRID_SIZE = 3  # 3x3 grid
 SCREEN_WIDTH = 50
 SCREEN_HEIGHT = 35
 
-STARTING_FOOD_COUNT = (WORLD_WIDTH * WORLD_HEIGHT) // 10
+STARTING_FOOD_COUNT = (WORLD_WIDTH * WORLD_HEIGHT) // 5
+FOOD_REPLENISHMENT_THRESHOLD = 0.2
+
 MUTATION_RATE = 0.01
 
 def generate_organisms(world, world_width, world_height, display):
@@ -236,7 +238,7 @@ def main():
 
         # Replenish food when only 20% remains
         current_food_count = len(food_morsels)
-        if current_food_count <= STARTING_FOOD_COUNT * 0.5:
+        if current_food_count <= STARTING_FOOD_COUNT * FOOD_REPLENISHMENT_THRESHOLD:
             food_needed = STARTING_FOOD_COUNT - current_food_count
             new_food = create_food_morsels(world, world_width, world_height, food_needed)
             food_morsels.extend(new_food)
