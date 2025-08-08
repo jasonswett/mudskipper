@@ -88,3 +88,18 @@ class Cell:
 
     def subtract_reproduction_cost(self):
         self.health -= self.REPRODUCTION_COST
+
+    def get_health_faded_color(self, base_color):
+        """Get a color that fades to light gray as health declines."""
+        # Calculate health percentage (0.0 to 1.0)
+        health_percentage = max(0, min(1, self.health / self.STARTING_HEALTH))
+
+        # Ghost gray color (light gray)
+        ghost_gray = (200, 200, 200)
+
+        # Interpolate between base color and ghost gray
+        r = int(base_color[0] * health_percentage + ghost_gray[0] * (1 - health_percentage))
+        g = int(base_color[1] * health_percentage + ghost_gray[1] * (1 - health_percentage))
+        b = int(base_color[2] * health_percentage + ghost_gray[2] * (1 - health_percentage))
+
+        return (r, g, b)

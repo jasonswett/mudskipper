@@ -30,10 +30,18 @@ class OrganismRendering:
             # Get the corresponding cell for colors
             if i < len(self.organism.cells()):
                 cell = self.organism.cells()[i]
+                # Get base colors
+                border_color = self.organism.genome_color()
+                fill_color = cell.fill_color
+
+                # Apply health-based fading
+                faded_border_color = cell.get_health_faded_color(border_color)
+                faded_fill_color = cell.get_health_faded_color(fill_color)
+
                 cell_renderings.append({
                     'vertices': screen_vertices,
-                    'border_color': self.organism.genome_color(),
-                    'fill_color': cell.fill_color
+                    'border_color': faded_border_color,
+                    'fill_color': faded_fill_color
                 })
         return cell_renderings
 
