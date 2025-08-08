@@ -146,9 +146,10 @@ def main():
     run_number = 1
     run_start_time = time.time()
 
-    # Records for longest run
-    longest_run_duration = 0
-    longest_run_number = 0
+    # Records for most cycles
+    run_cycles = 0
+    most_cycles = 0
+    most_cycles_run = 0
 
     # Cell count tracking variables
     max_organism_size = 0
@@ -174,16 +175,14 @@ def main():
                 running = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    # Calculate run duration
-                    run_duration = time.time() - run_start_time
-
-                    # Check if this was the longest run
-                    if run_duration > longest_run_duration:
-                        print(f"New longest run record: {run_duration:.1f}s (Run #{run_number})")
-                        longest_run_duration = run_duration
-                        longest_run_number = run_number
+                    # Check if this run had the most cycles
+                    if run_cycles > most_cycles:
+                        print(f"New cycle record: {run_cycles} cycles (Run #{run_number})")
+                        most_cycles = run_cycles
+                        most_cycles_run = run_number
 
                     run_number += 1
+                    run_cycles = 0
                     run_start_time = time.time()
                     organisms.clear()
                     organisms, food_morsels, contact_listener = reset_world(world, world_width, world_height, display)
@@ -242,24 +241,25 @@ def main():
             food_needed = STARTING_FOOD_COUNT - current_food_count
             new_food = create_food_morsels(world, world_width, world_height, food_needed)
             food_morsels.extend(new_food)
+            run_cycles += 1
             print(f"Replenished {food_needed} food morsels (total: {len(food_morsels)})")
+            print(f"Cycle {run_cycles} complete")
 
         # Update food count every frame for responsiveness
         food_count = len(food_morsels)
 
         # Check if population is too low - restart if so
         if len(organisms) < 2:
-            # Calculate run duration
-            run_duration = time.time() - run_start_time
-            print(f"Run #{run_number} ended - population fell to {len(organisms)} after {run_duration:.1f} seconds")
+            print(f"Run #{run_number} ended - population fell to {len(organisms)} after {run_cycles} cycles")
 
-            # Check if this was the longest run
-            if run_duration > longest_run_duration:
-                longest_run_duration = run_duration
-                longest_run_number = run_number
-                print(f"New longest run record: {run_duration:.1f}s (Run #{run_number})")
+            # Check if this run had the most cycles
+            if run_cycles > most_cycles:
+                most_cycles = run_cycles
+                most_cycles_run = run_number
+                print(f"New cycle record: {run_cycles} cycles (Run #{run_number})")
 
             run_number += 1
+            run_cycles = 0
             run_start_time = time.time()
             print(f"Starting Run #{run_number}")
 
@@ -426,14 +426,13 @@ def main():
         run_surface = font.render(run_text, False, WHITE)
         display.blit(run_surface, (10, 60))
 
-        # Current run timer
-        current_run_time = time.time() - run_start_time
-        timer_text = f"Time: {current_run_time:.1f}s"
-        timer_surface = font.render(timer_text, False, WHITE)
-        display.blit(timer_surface, (10, 85))
-        # Longest run record
-        if longest_run_duration > 0:
-            record_text = f"Record: {longest_run_duration:.1f}s (Run #{longest_run_number})"
+        # Current run cycles
+        cycles_text = f"Cycle count: {run_cycles}"
+        cycles_surface = font.render(cycles_text, False, WHITE)
+        display.blit(cycles_surface, (10, 85))
+        # Most cycles record
+        if most_cycles > 0:
+            record_text = f"Record cycle count: {most_cycles} (Run #{most_cycles_run})"
             record_surface = font.render(record_text, False, WHITE)
             display.blit(record_surface, (10, 110))
         # Cell count stats
