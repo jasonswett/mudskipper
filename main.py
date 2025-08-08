@@ -277,8 +277,8 @@ def main():
             contact_events = []
 
             print(f"Run #{run_number} started with {len(organisms)} organisms")
-            if longest_run_duration > 0:
-                print(f"Longest run so far: {longest_run_duration:.1f}s (Run #{longest_run_number})")
+            if most_cycles > 0:
+                print(f"Record cycle count so far: {most_cycles} cycles (Run #{most_cycles_run})")
 
         # Continuous camera movement
         keys = pygame.key.get_pressed()
