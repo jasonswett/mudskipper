@@ -1,13 +1,22 @@
 from src.cell_gene import CellGene
 
 class Genome:
-    CELL_COUNT_PREFIX_LENGTH = 4
+    MIN_CELL_COUNT = 2
     MAX_CELL_COUNT = 6
+
+    @classmethod
+    def cell_count_prefix_length(cls):
+        """Calculate required prefix length based on max cell count."""
+        import math
+        # We need enough bits to represent (MAX_CELL_COUNT - MIN_CELL_COUNT) additional cells
+        additional_cells = cls.MAX_CELL_COUNT - cls.MIN_CELL_COUNT
+        return max(1, math.ceil(math.log2(additional_cells + 1))) if additional_cells > 0 else 1
 
     def __init__(self, max_cell_count=None):
         self.max_cell_count = max_cell_count or self.MAX_CELL_COUNT
-        # Start with 4 zeros for cell count prefix
-        self.cell_count_prefix = '0' * self.CELL_COUNT_PREFIX_LENGTH
+        # Start with zeros for cell count prefix
+        prefix_length = self.cell_count_prefix_length()
+        self.cell_count_prefix = '0' * prefix_length
 
         # Generate genes for maximum possible cells
         self._cell_genes = []
@@ -17,7 +26,7 @@ class Genome:
     def effective_cell_count(self):
         """Calculate actual number of cells based on prefix sum."""
         prefix_sum = sum(int(bit) for bit in self.cell_count_prefix)
-        return 2 + min(prefix_sum, self.MAX_CELL_COUNT - 2)  # Cap at max cells (2 + extra)
+        return self.MIN_CELL_COUNT + min(prefix_sum, self.MAX_CELL_COUNT - self.MIN_CELL_COUNT)  # Cap at max cells
 
     def cell_genes(self):
         """Return only the cell genes that should be active."""
@@ -35,15 +44,16 @@ class Genome:
         genome = cls.__new__(cls)
         genome.max_cell_count = cls.MAX_CELL_COUNT
 
-        # Extract cell count prefix (first 4 bits)
-        if len(genome_string) >= cls.CELL_COUNT_PREFIX_LENGTH:
-            genome.cell_count_prefix = genome_string[:cls.CELL_COUNT_PREFIX_LENGTH]
+        # Extract cell count prefix
+        prefix_length = cls.cell_count_prefix_length()
+        if len(genome_string) >= prefix_length:
+            genome.cell_count_prefix = genome_string[:prefix_length]
         else:
             # If genome string is too short, pad with zeros
-            genome.cell_count_prefix = (genome_string + '0' * cls.CELL_COUNT_PREFIX_LENGTH)[:cls.CELL_COUNT_PREFIX_LENGTH]
+            genome.cell_count_prefix = (genome_string + '0' * prefix_length)[:prefix_length]
 
         # Extract cell genes from remainder of string
-        cell_genes_string = genome_string[cls.CELL_COUNT_PREFIX_LENGTH:]
+        cell_genes_string = genome_string[prefix_length:]
         genome._cell_genes = []
 
         # Calculate the length of each cell gene
@@ -73,7 +83,8 @@ class Genome:
 
         if min_length == 0:
             # If one genome is empty, return a basic genome string
-            return '0000' + '0' * (Genome.MAX_CELL_COUNT * sum(CellGene.GENE_SECTION_LENGTHS.values()))
+            prefix_length = Genome.cell_count_prefix_length()
+            return '0' * prefix_length + '0' * (Genome.MAX_CELL_COUNT * sum(CellGene.GENE_SECTION_LENGTHS.values()))
 
         # Choose a random splice point
         splice_point = random.randint(0, min_length - 1)
