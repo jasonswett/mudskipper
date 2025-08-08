@@ -71,7 +71,34 @@ class Cell:
     def move(self, delta):
         q, r, s = self.position
         dq, dr, ds = delta
-        self.position = (q + dq, r + dr, s + ds)
+        new_q = q + dq
+        new_r = r + dr
+        new_s = s + ds
+
+        # Clamp hex coordinates to prevent extreme values that cause Box2D issues
+        # Based on world size of 120x120, reasonable hex coordinate range is about ±150
+        MAX_HEX_COORD = 150
+        new_q = max(-MAX_HEX_COORD, min(MAX_HEX_COORD, new_q))
+        new_r = max(-MAX_HEX_COORD, min(MAX_HEX_COORD, new_r))
+        new_s = max(-MAX_HEX_COORD, min(MAX_HEX_COORD, new_s))
+
+        # Ensure q + r + s = 0 constraint is maintained after clamping
+        # If clamping broke the constraint, adjust the coordinate that changed least
+        coord_sum = new_q + new_r + new_s
+        if coord_sum != 0:
+            # Find which coordinate was clamped least (has most room to adjust)
+            q_room = MAX_HEX_COORD - abs(new_q)
+            r_room = MAX_HEX_COORD - abs(new_r)
+            s_room = MAX_HEX_COORD - abs(new_s)
+
+            if q_room >= r_room and q_room >= s_room:
+                new_q -= coord_sum
+            elif r_room >= s_room:
+                new_r -= coord_sum
+            else:
+                new_s -= coord_sum
+
+        self.position = (new_q, new_r, new_s)
         self.q, self.r, self.s = self.position
         # Note: Position change will be detected by organism's _have_cells_moved() check
 
