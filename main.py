@@ -55,7 +55,7 @@ def generate_organisms(world, world_width, world_height, display):
 def generate_organism(world, world_width, world_height, display):
     # Keep trying until we get a legal cellular body
     while True:
-        genome = Genome(4)  # Max 4 cells
+        genome = Genome()
         cellular_body_builder = CellularBodyBuilder(genome.cell_genes())
         cellular_body = cellular_body_builder.cellular_body()
 
@@ -70,13 +70,13 @@ def generate_offspring(parent_a_genome, parent_b_genome, world, world_width, wor
     # Keep trying until we get a legal cellular body
     while True:
         # Splice parent genomes
-        spliced_genome_string = Genome.splice(parent_a_genome, parent_b_genome, 4)
+        spliced_genome_string = Genome.splice(parent_a_genome, parent_b_genome)
 
         # Apply mutations
         mutated_genome_string = Genome.mutate(spliced_genome_string, mutation_rate=MUTATION_RATE)
 
         # Create offspring genome from mutated string
-        offspring_genome = Genome.from_string(mutated_genome_string, 4)
+        offspring_genome = Genome.from_string(mutated_genome_string)
         cellular_body_builder = CellularBodyBuilder(offspring_genome.cell_genes())
         cellular_body = cellular_body_builder.cellular_body()
 

@@ -2,9 +2,10 @@ from src.cell_gene import CellGene
 
 class Genome:
     CELL_COUNT_PREFIX_LENGTH = 4
+    MAX_CELL_COUNT = 6
 
-    def __init__(self, max_cell_count=4):
-        self.max_cell_count = max_cell_count
+    def __init__(self, max_cell_count=None):
+        self.max_cell_count = max_cell_count or self.MAX_CELL_COUNT
         # Start with 4 zeros for cell count prefix
         self.cell_count_prefix = '0' * self.CELL_COUNT_PREFIX_LENGTH
 
@@ -16,7 +17,7 @@ class Genome:
     def effective_cell_count(self):
         """Calculate actual number of cells based on prefix sum."""
         prefix_sum = sum(int(bit) for bit in self.cell_count_prefix)
-        return 2 + min(prefix_sum, 2)  # Cap at max 4 cells (2 + 2)
+        return 2 + min(prefix_sum, self.MAX_CELL_COUNT - 2)  # Cap at max cells (2 + extra)
 
     def cell_genes(self):
         """Return only the cell genes that should be active."""
@@ -29,10 +30,10 @@ class Genome:
         return self.cell_count_prefix + cell_genes_string
 
     @classmethod
-    def from_string(cls, genome_string, max_cell_count=4):
+    def from_string(cls, genome_string):
         """Create a genome from a genome string."""
         genome = cls.__new__(cls)
-        genome.max_cell_count = max_cell_count
+        genome.max_cell_count = cls.MAX_CELL_COUNT
 
         # Extract cell count prefix (first 4 bits)
         if len(genome_string) >= cls.CELL_COUNT_PREFIX_LENGTH:
@@ -49,7 +50,7 @@ class Genome:
         cell_gene_length = sum(CellGene.GENE_SECTION_LENGTHS.values())
 
         # Extract each cell gene from the string
-        for i in range(max_cell_count):
+        for i in range(genome.max_cell_count):
             start = i * cell_gene_length
             end = start + cell_gene_length
             if end <= len(cell_genes_string):
@@ -63,7 +64,7 @@ class Genome:
         return genome
 
     @staticmethod
-    def splice(genome_string_a, genome_string_b, max_cell_count=4):
+    def splice(genome_string_a, genome_string_b):
         """Create offspring genome by splicing two parent genomes at a random point."""
         import random
 
@@ -72,7 +73,7 @@ class Genome:
 
         if min_length == 0:
             # If one genome is empty, return a basic genome string
-            return '0000' + '0' * (max_cell_count * sum(CellGene.GENE_SECTION_LENGTHS.values()))
+            return '0000' + '0' * (Genome.MAX_CELL_COUNT * sum(CellGene.GENE_SECTION_LENGTHS.values()))
 
         # Choose a random splice point
         splice_point = random.randint(0, min_length - 1)

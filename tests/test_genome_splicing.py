@@ -10,13 +10,13 @@ class TestGenomeSplicing:
         parent_b = "0110000010001110101110"
 
         # Create offspring through splicing
-        offspring_string = Genome.splice(parent_a, parent_b, 2)
-        offspring_genome = Genome.from_string(offspring_string, 2)
+        offspring_string = Genome.splice(parent_a, parent_b)
+        offspring_genome = Genome.from_string(offspring_string)
 
         # Offspring should be a valid Genome object
         assert isinstance(offspring_genome, Genome)
-        assert offspring_genome.max_cell_count == 2
-        assert len(offspring_genome.cell_genes()) == 2
+        assert offspring_genome.max_cell_count == Genome.MAX_CELL_COUNT
+        assert len(offspring_genome.cell_genes()) >= 2
 
         # Offspring genome string should contain parts from both parents
         assert isinstance(offspring_string, str)
@@ -31,33 +31,33 @@ class TestGenomeSplicing:
         parent_a = "11001011"
         parent_b = "0110000010001110101110"
 
-        offspring_string = Genome.splice(parent_a, parent_b, 2)
-        offspring_genome = Genome.from_string(offspring_string, 2)
+        offspring_string = Genome.splice(parent_a, parent_b)
+        offspring_genome = Genome.from_string(offspring_string)
 
         assert isinstance(offspring_genome, Genome)
-        assert offspring_genome.max_cell_count == 2
+        assert offspring_genome.max_cell_count == Genome.MAX_CELL_COUNT
 
     def test_splice_with_empty_genome(self):
         """Test splicing when one parent has empty genome."""
         parent_a = ""
         parent_b = "0110000010001110101110"
 
-        offspring_string = Genome.splice(parent_a, parent_b, 2)
-        offspring_genome = Genome.from_string(offspring_string, 2)
+        offspring_string = Genome.splice(parent_a, parent_b)
+        offspring_genome = Genome.from_string(offspring_string)
 
         # Should create a random genome when one parent is empty
         assert isinstance(offspring_genome, Genome)
-        assert offspring_genome.max_cell_count == 2
+        assert offspring_genome.max_cell_count == Genome.MAX_CELL_COUNT
 
     def test_from_string_creates_valid_genome(self):
         """Test that from_string method creates a valid genome."""
         genome_string = "1100101111101110101001"
 
-        genome = Genome.from_string(genome_string, 2)
+        genome = Genome.from_string(genome_string)
 
         assert isinstance(genome, Genome)
-        assert genome.max_cell_count == 2
-        assert len(genome.cell_genes()) == 2
+        assert genome.max_cell_count == Genome.MAX_CELL_COUNT
+        assert len(genome.cell_genes()) >= 2
 
         # The resulting genome string should match or be based on the input
         result_string = genome.value()
@@ -72,7 +72,7 @@ class TestGenomeSplicing:
         # Run splice multiple times and collect results
         results = []
         for _ in range(10):
-            offspring_string = Genome.splice(parent_a, parent_b, 2)
+            offspring_string = Genome.splice(parent_a, parent_b)
             results.append(offspring_string)
 
         # Should have some variation in results due to random splice point
