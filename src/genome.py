@@ -2,15 +2,13 @@ from src.cell_gene import CellGene
 
 class Genome:
     MIN_CELL_COUNT = 2
-    MAX_CELL_COUNT = 6
+    MAX_CELL_COUNT = 16
 
     @classmethod
     def cell_count_prefix_length(cls):
         """Calculate required prefix length based on max cell count."""
-        import math
-        # We need enough bits to represent (MAX_CELL_COUNT - MIN_CELL_COUNT) additional cells
-        additional_cells = cls.MAX_CELL_COUNT - cls.MIN_CELL_COUNT
-        return max(1, math.ceil(math.log2(additional_cells + 1))) if additional_cells > 0 else 1
+        # One bit for each possible additional cell beyond MIN_CELL_COUNT
+        return cls.MAX_CELL_COUNT - cls.MIN_CELL_COUNT
 
     def __init__(self, max_cell_count=None):
         self.max_cell_count = max_cell_count or self.MAX_CELL_COUNT
