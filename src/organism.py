@@ -102,18 +102,17 @@ class Organism:
 
     def genome_color(self):
         """Get a color based on the genome checksum for visual identification."""
+        import hashlib
+
         genome_string = self.genome()
 
-        # Create a simple checksum from the genome string
-        checksum = 0
-        for i, char in enumerate(genome_string):
-            checksum += ord(char) * (i + 1)
+        # Use MD5 hash for better distribution
+        hash_bytes = hashlib.md5(genome_string.encode()).digest()
 
-        # Convert checksum to RGB values
-        # Use modulo to keep values in 0-255 range, with some offset for visibility
-        r = (checksum % 200) + 55  # 55-254 range
-        g = ((checksum >> 8) % 200) + 55
-        b = ((checksum >> 16) % 200) + 55
+        # Extract RGB from different parts of hash for independence
+        r = hash_bytes[0] % 200 + 55  # 55-254 range (avoid too dark/light)
+        g = hash_bytes[1] % 200 + 55
+        b = hash_bytes[2] % 200 + 55
 
         return (r, g, b)
 
