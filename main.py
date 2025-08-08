@@ -149,6 +149,10 @@ def main():
     longest_run_duration = 0
     longest_run_number = 0
 
+    # Cell count tracking variables
+    max_organism_size = 0
+    max_organism_size_run = 0
+
     # Create camera to view the 3x3 grid
     # Camera world size is the full 3x3 grid, viewport is the screen size
     camera = Camera(WORLD_WIDTH * GRID_SIZE, WORLD_HEIGHT * GRID_SIZE, screen.width, screen.height)
@@ -189,6 +193,20 @@ def main():
         if frame_count % 60 == 0:
             print("-----------------------")
             print(f"tick: {frame_count}")
+
+            # Calculate average cell count and track max organism size
+            if organisms:
+                cell_counts = [len(organism.cells()) for organism in organisms]
+                avg_cell_count = sum(cell_counts) / len(cell_counts)
+                current_max = max(cell_counts)
+
+                # Update max organism size record
+                if current_max > max_organism_size:
+                    max_organism_size = current_max
+                    max_organism_size_run = run_number
+
+                print(f"Avg cells per organism: {avg_cell_count:.1f}")
+                print(f"Biggest organism record: {max_organism_size} cells (Run #{max_organism_size_run})")
 
             # Get contact events from contact listener
             contact_events = contact_listener.get_contact_events()
@@ -413,12 +431,21 @@ def main():
         timer_text = f"Time: {current_run_time:.1f}s"
         timer_surface = font.render(timer_text, False, WHITE)
         display.blit(timer_surface, (10, 85))
-
         # Longest run record
         if longest_run_duration > 0:
             record_text = f"Record: {longest_run_duration:.1f}s (Run #{longest_run_number})"
             record_surface = font.render(record_text, False, WHITE)
             display.blit(record_surface, (10, 110))
+        # Cell count stats
+        if organisms:
+            current_avg_cells = sum(len(organism.cells()) for organism in organisms) / len(organisms)
+            avg_cells_text = f"Cell count average: {current_avg_cells:.1f}"
+            avg_cells_surface = font.render(avg_cells_text, False, WHITE)
+            display.blit(avg_cells_surface, (10, 135))
+            if max_organism_size > 0:
+                biggest_text = f"Record organism size: {max_organism_size} cells (Run #{max_organism_size_run})"
+                biggest_surface = font.render(biggest_text, False, WHITE)
+                display.blit(biggest_surface, (10, 160))
 
         pygame.display.flip()
         clock.tick(60)
