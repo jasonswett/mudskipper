@@ -2,7 +2,7 @@ from src.cell_gene import CellGene
 
 class Genome:
     MIN_CELL_COUNT = 2
-    MAX_CELL_COUNT = 16
+    MAX_CELL_COUNT = 6
 
     @classmethod
     def cell_count_prefix_length(cls):

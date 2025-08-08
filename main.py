@@ -277,8 +277,8 @@ def main():
             contact_events = []
 
             print(f"Run #{run_number} started with {len(organisms)} organisms")
-            if most_cycles > 0:
-                print(f"Record cycle count so far: {most_cycles} cycles (Run #{most_cycles_run})")
+            if longest_run_duration > 0:
+                print(f"Longest run so far: {longest_run_duration:.1f}s (Run #{longest_run_number})")
 
         # Continuous camera movement
         keys = pygame.key.get_pressed()
@@ -378,8 +378,6 @@ def main():
                 if wrap_position:
                     # Teleport organism to wrapped position
                     organism.body.position = wrap_position
-                    # Synchronize hex coordinates with new body position
-                    organism.sync_hex_coordinates_to_body_position()
             else:
                 world.DestroyBody(organism.body)
                 organisms_to_remove.append(organism)
