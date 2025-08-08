@@ -4,8 +4,6 @@ import math
 import random
 import time
 
-MAXIMUM_POPULATION = 500
-
 from src.genome import Genome
 from src.cell import Cell
 from src.cellular_body_builder import CellularBodyBuilder
@@ -29,15 +27,16 @@ DARK_GRAY = (64, 64, 64)
 YELLOW = (255, 255, 0)
 RED = (255, 0, 0)
 
-WORLD_WIDTH = 80  # meters
-WORLD_HEIGHT = 80  # meters
-ORGANISM_COUNT = (WORLD_WIDTH * WORLD_HEIGHT) // 20
+WORLD_WIDTH = 120  # meters
+WORLD_HEIGHT = 120  # meters
+POPULATION_MAXIMUM = 500
+ORGANISM_COUNT = POPULATION_MAXIMUM
 
 GRID_SIZE = 3  # 3x3 grid
 SCREEN_WIDTH = 50
 SCREEN_HEIGHT = 35
 
-STARTING_FOOD_COUNT = 800
+STARTING_FOOD_COUNT = (WORLD_WIDTH * WORLD_HEIGHT) // 10
 MUTATION_RATE = 0.01
 
 def generate_organisms(world, world_width, world_height, display):
@@ -217,7 +216,7 @@ def main():
                 organism_b = contact_event['organism_b']
                 position = contact_event['position']
 
-                while organism_a.can_reproduce() and organism_b.can_reproduce() and len(organisms) < MAXIMUM_POPULATION:
+                while organism_a.can_reproduce() and organism_b.can_reproduce() and len(organisms) < POPULATION_MAXIMUM:
                     organism_a.subtract_reproduction_cost()
                     organism_b.subtract_reproduction_cost()
 
