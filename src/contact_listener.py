@@ -9,6 +9,11 @@ class ContactListener(Box2D.b2ContactListener):
         self.touching_organisms = set()  # Set of organism pairs that are touching
         self.contact_events = []  # List of contact events for reproduction
 
+        # Spatial hash maps for O(1) lookups
+        self.body_to_organism = {}
+        self.body_to_food_morsel = {}
+        self._rebuild_spatial_hash()
+
     def BeginContact(self, contact):
         body_a = contact.fixtureA.body
         body_b = contact.fixtureB.body
@@ -67,11 +72,8 @@ class ContactListener(Box2D.b2ContactListener):
             self.touching_organisms.discard(pair)  # Remove if exists
 
     def _get_organism(self, body):
-        """Find organism that owns the given body."""
-        for organism in self.organisms:
-            if organism.body == body:
-                return organism
-        return None
+        """Find organism that owns the given body using spatial hash."""
+        return self.body_to_organism.get(body)
 
     def is_organism_touching(self, organism):
         """Check if an organism is touching any other organism."""
@@ -82,20 +84,54 @@ class ContactListener(Box2D.b2ContactListener):
         return False
 
     def _food_morsel(self, body_a, body_b):
-        for food_morsel in self.food_morsels:
-            if food_morsel.body == body_a or food_morsel.body == body_b:
-                return food_morsel
-        return None
+        """Find food morsel using spatial hash."""
+        food_a = self.body_to_food_morsel.get(body_a)
+        if food_a:
+            return food_a
+        return self.body_to_food_morsel.get(body_b)
 
     def _organism(self, body_a, body_b, food_body):
+        """Find organism using spatial hash."""
         other_body = body_b if food_body == body_a else body_a
-        for organism in self.organisms:
-            if organism.body == other_body:
-                return organism
-        return None
+        return self.body_to_organism.get(other_body)
 
     def get_contact_events(self):
         """Get and clear the list of contact events."""
         events = self.contact_events.copy()
         self.contact_events.clear()
         return events
+
+    def _rebuild_spatial_hash(self):
+        """Rebuild the spatial hash maps for fast body lookups."""
+        self.body_to_organism.clear()
+        self.body_to_food_morsel.clear()
+
+        # Map organism bodies
+        for organism in self.organisms:
+            if hasattr(organism, 'body') and organism.body:
+                self.body_to_organism[organism.body] = organism
+
+        # Map food morsel bodies
+        for food_morsel in self.food_morsels:
+            if hasattr(food_morsel, 'body') and food_morsel.body:
+                self.body_to_food_morsel[food_morsel.body] = food_morsel
+
+    def add_organism(self, organism):
+        """Add organism to spatial hash when new organisms are created."""
+        if hasattr(organism, 'body') and organism.body:
+            self.body_to_organism[organism.body] = organism
+
+    def remove_organism(self, organism):
+        """Remove organism from spatial hash when organisms are destroyed."""
+        if hasattr(organism, 'body') and organism.body:
+            self.body_to_organism.pop(organism.body, None)
+
+    def add_food_morsel(self, food_morsel):
+        """Add food morsel to spatial hash when new food is created."""
+        if hasattr(food_morsel, 'body') and food_morsel.body:
+            self.body_to_food_morsel[food_morsel.body] = food_morsel
+
+    def remove_food_morsel(self, food_morsel):
+        """Remove food morsel from spatial hash when food is eaten."""
+        if hasattr(food_morsel, 'body') and food_morsel.body:
+            self.body_to_food_morsel.pop(food_morsel.body, None)

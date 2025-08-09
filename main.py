@@ -242,6 +242,7 @@ def main():
                         world, world_width, world_height, position
                     )
                     organisms.append(offspring)
+                    contact_listener.add_organism(offspring)
 
             # Flush contact events
             contact_events = []
@@ -256,6 +257,8 @@ def main():
             if avg_fps > healthy_fps_threshold:
                 new_food = create_food_morsels(world, world_width, world_height, FOOD_INCREMENT)
                 food_morsels.extend(new_food)
+                for food_morsel in new_food:
+                    contact_listener.add_food_morsel(food_morsel)
                 run_cycles += 1
                 print(f"FPS healthy ({avg_fps:.1f}): Added {FOOD_INCREMENT} food morsels (total: {len(food_morsels)})")
                 print(f"Cycle {run_cycles} complete")
@@ -344,8 +347,6 @@ def main():
                     Screen.to_pixels(world_x2 - world_x1),
                     Screen.to_pixels(world_y2 - world_y1)
                 )
-                # All tiles get dark gray borders
-                pygame.draw.rect(display, DARK_GRAY, world_rect, 1)
 
         # Draw organisms in all visible tiles
         for grid_x in range(tiles_to_draw_x):
@@ -401,6 +402,7 @@ def main():
 
         for organism in organisms_to_remove:
             organisms.remove(organism)
+            contact_listener.remove_organism(organism)
 
         # Draw food morsels in all visible tiles
         for grid_x in range(tiles_to_draw_x):
@@ -429,6 +431,7 @@ def main():
 
         for food_morsel in food_morsels_to_remove:
             food_morsels.remove(food_morsel)
+            contact_listener.remove_food_morsel(food_morsel)
 
         # Display FPS, population, food counts, run number, and timer
         # FPS display with color coding
