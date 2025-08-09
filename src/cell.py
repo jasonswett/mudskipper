@@ -3,7 +3,6 @@ from src.cellular_body import CellularBody
 class Cell:
     STIMULATION_COLOR = (255, 255, 0)
     STIMULATION_DURATION = 8
-    STIMULATION_PROPAGATION_DELAY = 1
     DEATH_COLOR = (128, 128, 128)
     REFRACTORY_PERIOD = 20
     STARTING_HEALTH = 400
@@ -19,6 +18,7 @@ class Cell:
         self.fill_color = fill_color
         self.original_fill_color = fill_color
         self.movement_deltas = movement_deltas
+        self.movement_index = 0  # Track which movement delta to try next
         self.clock_tick_count = 0
         self.ticks_left_before_unstimulated = 0
         self.ticks_left_before_stimulation_propagation = 0
@@ -41,7 +41,9 @@ class Cell:
             self.fill_color = self.STIMULATION_COLOR
             self.ticks_left_before_unstimulated -= 1
             if self.ticks_left_before_unstimulated == 0:
-                self.ticks_left_before_stimulation_propagation = self.STIMULATION_PROPAGATION_DELAY
+                # Use genetically determined propagation delay
+                propagation_delay = self.gene.stimulation_propagation_delay() if hasattr(self, 'gene') else 1
+                self.ticks_left_before_stimulation_propagation = propagation_delay
         else:
             self.fill_color = self.original_fill_color
         if self.ticks_left_before_stimulation_propagation > 0:

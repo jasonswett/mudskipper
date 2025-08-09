@@ -12,15 +12,26 @@ class CellularBody:
 
         i = self.cells.index(cell)
 
-        # Try each movement delta in order
-        for delta in cell.movement_deltas:
+        # Round-robin through movement deltas, starting from current movement_index
+        attempts = 0
+        num_movements = len(cell.movement_deltas)
+
+        while attempts < num_movements:
+            delta = cell.movement_deltas[cell.movement_index]
+
             test_cells = copy.deepcopy(self.cells)
             test_cells[i].move(delta)
             test_body = CellularBody(test_cells)
 
             if test_body.is_legal():
                 cell.move(delta)
+                # Advance to next movement for next stimulation
+                cell.movement_index = (cell.movement_index + 1) % num_movements
                 return
+
+            # Try next movement delta
+            cell.movement_index = (cell.movement_index + 1) % num_movements
+            attempts += 1
 
     def update_clock(self):
         for cell in self.cells:
@@ -76,7 +87,7 @@ class CellularBody:
             (-1, 1, 0),
             (0, 1, -1)
         ]
-        
+
         for other_cell in self.cells:
             if other_cell != cell:
                 q_diff = other_cell.q - cell.q

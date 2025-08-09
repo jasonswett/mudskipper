@@ -32,10 +32,10 @@ def test_neighbors():
     from src.cell_sequence import CellSequence
     from src.cell_builder import CellBuilder
 
-    # Gene format: placement(3) + movement1(3) + movement2(3) + type(2) = 11 bits
-    cell_gene_origin = CellGene("00000000011")
-    cell_gene_straight_up = CellGene("00100000000")
-    cell_gene_down_right = CellGene("01100000000")
+    # Gene format: placement(3) + movement1-3(9) + type(2) + pulse(7) + propagation(3) = 24 bits
+    cell_gene_origin = CellGene("000000000000000000000011")
+    cell_gene_straight_up = CellGene("001000000000000000000000")
+    cell_gene_down_right = CellGene("011000000000000000000000")
 
     cell_sequence = CellSequence([
         cell_gene_origin.placement_delta(),

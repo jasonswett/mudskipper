@@ -6,7 +6,10 @@ class CellGene(Gene):
         'placement_delta': 3,
         'movement_delta_1': 3,
         'movement_delta_2': 3,
+        'movement_delta_3': 3,
         'cell_type': 2,
+        'pulse_interval': 7,
+        'stimulation_propagation_delay': 3,
     }
 
     LEGAL_DELTAS = [
@@ -56,7 +59,8 @@ class CellGene(Gene):
     def movement_deltas(self):
         return [
             self.LEGAL_DELTAS[self.int_value('movement_delta_1')],
-            self.LEGAL_DELTAS[self.int_value('movement_delta_2')]
+            self.LEGAL_DELTAS[self.int_value('movement_delta_2')],
+            self.LEGAL_DELTAS[self.int_value('movement_delta_3')]
         ]
 
     def int_value(self, section_name):
@@ -73,3 +77,11 @@ class CellGene(Gene):
             return "pulser"
         else:
             return "default"
+
+    def pulse_interval(self):
+        # Get 7-bit value (0-127) and add 1 for range 1-128
+        return self.int_value('pulse_interval') + 1
+
+    def stimulation_propagation_delay(self):
+        # Get 3-bit value (0-7) and add 1 for range 1-8
+        return self.int_value('stimulation_propagation_delay') + 1

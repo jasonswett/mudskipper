@@ -36,8 +36,9 @@ GRID_SIZE = 3  # 3x3 grid
 SCREEN_WIDTH = 50
 SCREEN_HEIGHT = 35
 
-STARTING_FOOD_COUNT = (WORLD_WIDTH * WORLD_HEIGHT) // 5
-FOOD_REPLENISHMENT_THRESHOLD = 0.4
+STARTING_FOOD_COUNT = 2000  # Seed food to prevent immediate starvation
+FOOD_INCREMENT = 100  # Add this many food morsels when FPS is healthy
+FPS_CHECK_INTERVAL = 120  # Check FPS every 2 seconds (120 frames at 60 FPS)
 
 MUTATION_RATE = 0.01
 
@@ -155,6 +156,11 @@ def main():
     max_organism_size = 0
     max_organism_size_run = 0
 
+    # FPS tracking for performance-based food control
+    fps_history = []
+    fps_update_interval = 10  # Update FPS every 10 frames
+    healthy_fps_threshold = 40  # FPS above which food gets replenished
+
     # Create camera to view the 3x3 grid
     # Camera world size is the full 3x3 grid, viewport is the screen size
     camera = Camera(WORLD_WIDTH * GRID_SIZE, WORLD_HEIGHT * GRID_SIZE, screen.width, screen.height)
@@ -190,6 +196,15 @@ def main():
                     food_count = len(food_morsels)
 
         frame_count += 1
+
+        # Update FPS calculation
+        current_fps = clock.get_fps()
+        fps_history.append(current_fps)
+        if len(fps_history) > 60:  # Keep last 60 FPS readings (1 second at 60 FPS)
+            fps_history.pop(0)
+
+        avg_fps = sum(fps_history) / len(fps_history) if fps_history else 60
+
         if frame_count % 60 == 0:
             print("-----------------------")
             print(f"tick: {frame_count}")
@@ -235,15 +250,17 @@ def main():
             population_count = len(organisms)
             food_count = len(food_morsels)
 
-        # Replenish food when only 20% remains
-        current_food_count = len(food_morsels)
-        if current_food_count <= STARTING_FOOD_COUNT * FOOD_REPLENISHMENT_THRESHOLD:
-            food_needed = STARTING_FOOD_COUNT - current_food_count
-            new_food = create_food_morsels(world, world_width, world_height, food_needed)
-            food_morsels.extend(new_food)
-            run_cycles += 1
-            print(f"Replenished {food_needed} food morsels (total: {len(food_morsels)})")
-            print(f"Cycle {run_cycles} complete")
+        # Performance-based incremental food addition
+        # Check FPS and add food every few seconds if performance is healthy
+        if frame_count % FPS_CHECK_INTERVAL == 0:
+            if avg_fps > healthy_fps_threshold:
+                new_food = create_food_morsels(world, world_width, world_height, FOOD_INCREMENT)
+                food_morsels.extend(new_food)
+                run_cycles += 1
+                print(f"FPS healthy ({avg_fps:.1f}): Added {FOOD_INCREMENT} food morsels (total: {len(food_morsels)})")
+                print(f"Cycle {run_cycles} complete")
+            else:
+                print(f"FPS too low ({avg_fps:.1f}): No food added - organisms compete for existing food")
 
         # Update food count every frame for responsiveness
         food_count = len(food_morsels)
@@ -413,38 +430,51 @@ def main():
         for food_morsel in food_morsels_to_remove:
             food_morsels.remove(food_morsel)
 
-        # Display population, food counts, run number, and timer
+        # Display FPS, population, food counts, run number, and timer
+        # FPS display with color coding
+        fps_color = WHITE
+        if avg_fps > healthy_fps_threshold:
+            fps_color = GREEN  # Healthy FPS
+        elif avg_fps < 30:
+            fps_color = RED    # Critical FPS
+        else:
+            fps_color = YELLOW # Warning FPS
+
+        fps_text = f"FPS: {avg_fps:.1f}"
+        fps_surface = font.render(fps_text, False, fps_color)
+        display.blit(fps_surface, (10, 10))
+
         population_text = f"Population: {population_count}"
         population_surface = font.render(population_text, False, WHITE)
-        display.blit(population_surface, (10, 10))
+        display.blit(population_surface, (10, 35))
 
         food_text = f"Food: {food_count}"
         food_surface = font.render(food_text, False, WHITE)
-        display.blit(food_surface, (10, 35))
+        display.blit(food_surface, (10, 60))
 
         run_text = f"Run: {run_number}"
         run_surface = font.render(run_text, False, WHITE)
-        display.blit(run_surface, (10, 60))
+        display.blit(run_surface, (10, 85))
 
         # Current run cycles
         cycles_text = f"Cycle count: {run_cycles}"
         cycles_surface = font.render(cycles_text, False, WHITE)
-        display.blit(cycles_surface, (10, 85))
+        display.blit(cycles_surface, (10, 110))
         # Most cycles record
         if most_cycles > 0:
             record_text = f"Record cycle count: {most_cycles} (Run #{most_cycles_run})"
             record_surface = font.render(record_text, False, WHITE)
-            display.blit(record_surface, (10, 110))
+            display.blit(record_surface, (10, 135))
         # Cell count stats
         if organisms:
             current_avg_cells = sum(len(organism.cells()) for organism in organisms) / len(organisms)
             avg_cells_text = f"Cell count average: {current_avg_cells:.1f}"
             avg_cells_surface = font.render(avg_cells_text, False, WHITE)
-            display.blit(avg_cells_surface, (10, 135))
+            display.blit(avg_cells_surface, (10, 160))
             if max_organism_size > 0:
                 biggest_text = f"Record organism size: {max_organism_size} cells (Run #{max_organism_size_run})"
                 biggest_surface = font.render(biggest_text, False, WHITE)
-                display.blit(biggest_surface, (10, 160))
+                display.blit(biggest_surface, (10, 185))
 
         pygame.display.flip()
         clock.tick(60)
