@@ -18,6 +18,7 @@ from src.screen import Screen
 from src.food_morsel import FoodMorsel
 from src.contact_listener import ContactListener
 from src.camera import Camera
+from src.reflection_particle import ReflectionParticle
 
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
@@ -26,6 +27,7 @@ GRAY = (128, 128, 128)
 DARK_GRAY = (64, 64, 64)
 YELLOW = (255, 255, 0)
 RED = (255, 0, 0)
+BLUE = (0, 100, 255)
 
 WORLD_WIDTH = 120  # meters
 WORLD_HEIGHT = 120  # meters
@@ -94,6 +96,15 @@ def create_food_morsels(world, world_width, world_height, count=200):
         food_morsels.append(food_morsel)
     return food_morsels
 
+def create_reflection_particles(world, world_width, world_height, count=500):
+    reflection_particles = []
+    for _ in range(count):
+        x = random.uniform(5, world_width - 5)  # Stay away from edges
+        y = random.uniform(5, world_height - 5)
+        reflection_particle = ReflectionParticle(world, (x, y))
+        reflection_particles.append(reflection_particle)
+    return reflection_particles
+
 def create_walls(world, world_width, world_height):
     thickness = 1.0
 
@@ -125,9 +136,10 @@ def create_walls(world, world_width, world_height):
 def reset_world(world, world_width, world_height, display):
     organisms = generate_organisms(world, world_width, world_height, display)
     food_morsels = create_food_morsels(world, world_width, world_height, STARTING_FOOD_COUNT)
+    reflection_particles = create_reflection_particles(world, world_width, world_height, 500)
     contact_listener = ContactListener(organisms, food_morsels)
     world.contactListener = contact_listener
-    return organisms, food_morsels, contact_listener
+    return organisms, food_morsels, reflection_particles, contact_listener
 
 def main():
     pygame.init()
@@ -142,7 +154,7 @@ def main():
     font = pygame.font.Font(None, 24)
     world = Box2D.b2World(gravity=(0, 0))
 
-    organisms, food_morsels, contact_listener = reset_world(world, world_width, world_height, display)
+    organisms, food_morsels, reflection_particles, contact_listener = reset_world(world, world_width, world_height, display)
     frame_count = 0
     run_number = 1
     run_start_time = time.time()
@@ -191,7 +203,7 @@ def main():
                     run_cycles = 0
                     run_start_time = time.time()
                     organisms.clear()
-                    organisms, food_morsels, contact_listener = reset_world(world, world_width, world_height, display)
+                    organisms, food_morsels, reflection_particles, contact_listener = reset_world(world, world_width, world_height, display)
                     population_count = len(organisms)
                     food_count = len(food_morsels)
 
@@ -288,9 +300,11 @@ def main():
                 world.DestroyBody(organism.body)
             for food_morsel in food_morsels:
                 world.DestroyBody(food_morsel.body)
+            for reflection_particle in reflection_particles:
+                world.DestroyBody(reflection_particle.body)
 
             # Reset everything
-            organisms, food_morsels, contact_listener = reset_world(world, world_width, world_height, display)
+            organisms, food_morsels, reflection_particles, contact_listener = reset_world(world, world_width, world_height, display)
             frame_count = 0
             population_count = len(organisms)
             food_count = len(food_morsels)
@@ -421,6 +435,16 @@ def main():
                         y = Screen.to_pixels(screen_y)
                         radius = Screen.to_pixels(food_morsel.radius)
                         pygame.draw.circle(display, GREEN, (int(x), int(y)), int(radius))
+
+                # Draw all reflection particles in this grid cell
+                for reflection_particle in reflection_particles:
+                    pos = reflection_particle.body.position
+                    # Apply offset for this grid cell
+                    screen_x, screen_y = camera.world_to_screen(pos.x + offset_x, pos.y + offset_y)
+                    x = Screen.to_pixels(screen_x)
+                    y = Screen.to_pixels(screen_y)
+                    radius = Screen.to_pixels(reflection_particle.radius)
+                    pygame.draw.circle(display, BLUE, (int(x), int(y)), int(radius))
 
         # Remove eaten food morsels
         food_morsels_to_remove = []
