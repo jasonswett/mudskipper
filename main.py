@@ -482,8 +482,9 @@ def main():
         pygame.display.flip()
         clock.tick(60)
 
-        # Step the physics simulation
-        world.Step(1.0/60, 6, 2)
+        # Step the physics simulation at 30 FPS for better performance
+        if frame_count % 2 == 0:
+            world.Step(2.0/60, 6, 2)  # Double timestep every other frame
 
     pygame.quit()
 
