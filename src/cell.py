@@ -23,6 +23,7 @@ class Cell:
         self.ticks_left_before_unstimulated = 0
         self.ticks_left_before_stimulation_propagation = 0
         self.stimulation_count = 0
+        self.current_stimulation_color = self.STIMULATION_COLOR  # Color for current stimulation
         self.last_stimulation_tick = -self.REFRACTORY_PERIOD
         self.cellular_body = CellularBody([])
         self.health = self.STARTING_HEALTH
@@ -38,7 +39,7 @@ class Cell:
             self.die()
 
         if self.ticks_left_before_unstimulated > 0:
-            self.fill_color = self.STIMULATION_COLOR
+            self.fill_color = self.current_stimulation_color
             self.ticks_left_before_unstimulated -= 1
             if self.ticks_left_before_unstimulated == 0:
                 # Use genetically determined propagation delay
@@ -51,7 +52,7 @@ class Cell:
             if self.ticks_left_before_stimulation_propagation == 0:
                 self.stimulate_neighbors()
 
-    def stimulate(self):
+    def stimulate(self, stimulation_color=None):
         if not(self.is_alive()):
             return
 
@@ -63,9 +64,15 @@ class Cell:
         self.ticks_left_before_unstimulated = self.STIMULATION_DURATION
         self.last_stimulation_tick = self.clock_tick_count
 
+        # Store the stimulation color for this event
+        if stimulation_color is not None:
+            self.current_stimulation_color = stimulation_color
+        else:
+            self.current_stimulation_color = self.STIMULATION_COLOR  # Default to yellow
+
     def stimulate_neighbors(self):
         for neighbor in self.neighbors():
-            neighbor.stimulate()
+            neighbor.stimulate(self.current_stimulation_color)
 
     def neighbors(self):
         return self.cellular_body.neighbors(self)

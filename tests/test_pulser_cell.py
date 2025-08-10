@@ -18,7 +18,7 @@ def test_clock_tick():
 
     for i in range(pulse_interval + 1):
         pulser_cell.update_clock()
-    assert pulser_cell.fill_color == pulser_cell.STIMULATION_COLOR
+    assert pulser_cell.fill_color == original_fill_color  # Pulser cell should light up with its own color (blue)
 
     for i in range(pulser_cell.STIMULATION_DURATION):
         pulser_cell.update_clock()
