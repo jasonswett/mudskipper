@@ -1,4 +1,5 @@
 from src.gene import Gene
+from src.color import Color
 import random
 
 class CellGene(Gene):
@@ -24,8 +25,8 @@ class CellGene(Gene):
     ]
 
     FILL_COLORS_BY_CELL_TYPE = {
-        "pulser": (0, 0, 255),
-        "default": (0, 0, 0),
+        "pulser": Color.BLUE,
+        "default": (0, 0, 0),  # Black
     }
 
     BORDER_COLORS_BY_CELL_TYPE = {

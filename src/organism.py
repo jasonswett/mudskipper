@@ -1,5 +1,6 @@
 import Box2D
 import math
+from src.color import Color
 
 class Organism:
     MINIMUM_STIMULATION_COUNT = 40
@@ -112,19 +113,7 @@ class Organism:
 
     def genome_color(self):
         """Get a color based on the genome checksum for visual identification."""
-        import hashlib
-
-        genome_string = self.genome()
-
-        # Use MD5 hash for better distribution
-        hash_bytes = hashlib.md5(genome_string.encode()).digest()
-
-        # Extract RGB from different parts of hash for independence
-        r = hash_bytes[0] % 200 + 55  # 55-254 range (avoid too dark/light)
-        g = hash_bytes[1] % 200 + 55
-        b = hash_bytes[2] % 200 + 55
-
-        return (r, g, b)
+        return Color.from_genome(self.genome())
 
     def _update_position_cache(self):
         """Cache current cell positions for movement detection."""
