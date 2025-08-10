@@ -13,6 +13,6 @@ class PulserCell(Cell):
         pulse_interval = self.gene.pulse_interval() if hasattr(self, 'gene') else 20
 
         if self.clock_tick_count % pulse_interval == 0 and self.is_alive():
-            self.stimulate(self.original_fill_color)  # Pass own color as stimulation color
+            self.stimulate()
             self.health -= self.PULSE_HEALTH_COST
         super().update_clock()
