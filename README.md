@@ -1,5 +1,7 @@
 # Mudskipper
 
+![Demo](demo.gif)
+
 A virtual world with virtual life forms built with Python, Pygame, and Box2D.
 
 ## Setup
